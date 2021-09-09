@@ -27,7 +27,7 @@ Imports:
     magrittr,
     tidyr
 Remotes:
-    afsarchowdhury/hydeR
+    afsarchowdhury/g4sr
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 

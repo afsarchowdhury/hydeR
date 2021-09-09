@@ -8,7 +8,6 @@
 #' @examples
 #' hhs_school_population()
 #' @export
-#' @importFrom magrittr "%>%"
 hhs_school_population <- function() {
   ## Mesaage
   message(cat(crayon::cyan("Generating clean school population data")))
