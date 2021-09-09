@@ -1,0 +1,9 @@
+inst/doc
+.Rproj.user
+.Renviron
+.RData
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
+.Rbuildignore
