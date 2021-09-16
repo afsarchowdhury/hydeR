@@ -20,7 +20,6 @@ Imports:
     dplyr,
     ggplot2,
     glue,
-    g4sr
     httr,
     jsonlite,
     lubridate,
