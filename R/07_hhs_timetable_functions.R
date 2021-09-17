@@ -11,7 +11,7 @@
 hhs_timetable <- function(academicYear) {
   ## Message
   message(cat(crayon::cyan("Generating clean timetable data for", academicYear)))
-  
+
   ## Import data
   df_timetable <- g4sr::gfs_timetables(academicYear)
   df_calendar <- g4sr::gfs_calendar(academicYear)
@@ -21,10 +21,10 @@ hhs_timetable <- function(academicYear) {
   df_teaching_groups <- g4sr::gfs_teaching_groups(academicYear)
   df_teaching_subject <- g4sr::gfs_teaching_subjects(academicYear)
   df_teaching_department <- g4sr::gfs_teaching_departments(academicYear)
-  df_student_clean <- g4sr::gfs_clean_student_details_general(academicYear)
-  
+  df_student_clean <- hhs_student_details_general(academicYear)
+
   message(cat(crayon::silver("Clean datasets")))
-  
+
   ## Clean datasets
   # Clean timetable
   df_timetable_02 <- dplyr::select(df_timetable, -c(id...1))
@@ -55,9 +55,9 @@ hhs_timetable <- function(academicYear) {
   # Clean student
   df_student_clean_02 <- dplyr::select(df_student_clean, c(UPN:Surname.Forename.Reg, Gender:HML.Band, SEN))
   df_student_clean_02$GFSID <- as.integer(df_student_clean_02$GFSID)
-  
+
   message(cat(crayon::silver("Merge datasets")))
-  
+
   ## Merge datasets
   df <- dplyr::left_join(df_calendar_02, df_timetable_02, by = c("Week", "Day"))
   df <- dplyr::left_join(df, df_classes_02, by = c("id...2" = "period_id"))
@@ -67,9 +67,9 @@ hhs_timetable <- function(academicYear) {
   df <- dplyr::left_join(df, df_teaching_subject_02, by = c("subject_id" = "id", "Subject.Code", "Year.Group"))
   df <- dplyr::left_join(df, df_teaching_department_02, by = c("department_id" = "id"))
   df <- dplyr::left_join(df, df_student_clean_02, by = c("student_id" = "GFSID"))
-  
+
   message(cat(crayon::silver("Clean final output")))
-  
+
   ## Tidy
   df <- dplyr::mutate(df, student_end = ifelse(student_end > max(Date), NA, student_end))
   df <- dplyr::select(df, -c(Date))
@@ -94,14 +94,14 @@ hhs_timetable <- function(academicYear) {
   df_lesson_code <- dplyr::mutate(df_lesson_code, Lesson.ID = paste0(Week.Colour, Week.Day, ":", Period))
   df$Lesson.ID <- factor(df$Lesson.ID, levels = df_lesson_code$Lesson.ID)
   #df <- dplyr::arrange(df, name)
-  
+
   df <- dplyr::select(df, c(Staff.Code, Week.Colour, Day, Lesson.ID, Period, Room,
                             Department, Subject.Name, Subject.Code,
                             Year.Group, Class, "Lesson.Start" = start, "Lesson.End" = end,
                             UPN:SEN))
-  
+
   df <- dplyr::distinct(df)
-  
+
   # Tidy multiple rooms
   df <- dplyr::group_by(df, Staff.Code, Lesson.ID, Class)
   df <- tidyr::nest(df, Room = c(Room))
@@ -115,7 +115,7 @@ hhs_timetable <- function(academicYear) {
   df <- dplyr::mutate(df, Room = stringr::str_replace_all(Room, "\\)", ""))
   df <- dplyr::mutate(df, Room = stringr::str_replace_all(Room, "\"", ""))
   df <- dplyr::mutate(df, Room = stringr::str_replace_all(Room, "\\\\", ""))
-  
+
   ## Return
   return(df)
 }
