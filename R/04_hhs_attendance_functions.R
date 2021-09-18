@@ -22,20 +22,20 @@ hhs_attendance_student_session <- function(academicYear, goDate, session = NULL)
   df_students <- g4sr::gfs_student_details(academicYear)
   df_students_details <- g4sr::gfs_student_edu_details(academicYear)
 
-  message(cat(crayon::silver("Merge datasets")))
+  message(cat(crayon::magenta("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_students, df_attendance_student_session_marks, by = c("id" = "student_id"))
   df <- dplyr::left_join(df, df_attendance_codes, by = c("session_mark_id" = "id"))
   df <- dplyr::left_join(df, df_students_details, by = c("id" = "student_id"))
 
-  message(cat(crayon::silver("Compute metadata")))
+  message(cat(crayon::magenta("Compute metadata")))
 
   ## Create
   df <- dplyr::filter(df, !is.na(date))
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
 
-  message(cat(crayon::silver("Clean final output")))
+  message(cat(crayon::magenta("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
@@ -46,7 +46,7 @@ hhs_attendance_student_session <- function(academicYear, goDate, session = NULL)
   df <- dplyr::distinct(df)
 
   if (is.null(session)) {
-    message(cat(crayon::silver("No session preference provided.  Returning AM and PM.")))
+    message(cat(crayon::magenta("No session preference provided.  Returning AM and PM.")))
     df <- df
   } else {
     df <- dplyr::filter(df, Session == toupper(session))
@@ -79,7 +79,7 @@ hhs_attendance_student_lesson <- function(academicYear, goDate) {
   df_timetables <- g4sr::gfs_timetables(academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear)
 
-  message(cat(crayon::silver("Merge datasets")))
+  message(cat(crayon::magenta("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_students, df_attendance_student_lesson_marks, by = c("id" = "student_id"))
@@ -90,14 +90,14 @@ hhs_attendance_student_lesson <- function(academicYear, goDate) {
   df_02 <- dplyr::left_join(df_02, df_teachers, by = c("teacher_ids" = "id"))
   df <- dplyr::left_join(df, df_02, by = c("class_id" = "id"))
 
-  message(cat(crayon::silver("Compute metadata")))
+  message(cat(crayon::magenta("Compute metadata")))
 
   ## Create
   df <- dplyr::filter(df, !is.na(date))
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$registration_group, ")")
   df$Teacher = paste0(df$title, " ", df$preferred_last_name.y)
 
-  message(cat(crayon::silver("Clean final output")))
+  message(cat(crayon::magenta("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c("Lesson.ID" = name, "Lesson" = display_name, Teacher, "Room" = rooms,
@@ -133,18 +133,18 @@ hhs_attendance_student_summary <- function(academicYear) {
   df_students <- g4sr::gfs_student_details(academicYear)
   df_students_details <- g4sr::gfs_student_edu_details(academicYear)
 
-  message(cat(crayon::silver("Merge datasets")))
+  message(cat(crayon::magenta("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_students, df_attendance_student_summary, by = c("id" = "student_id"))
   df <- dplyr::left_join(df, df_students_details, by = c("id" = "student_id"))
 
-  message(cat(crayon::silver("Compute metadata")))
+  message(cat(crayon::magenta("Compute metadata")))
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
 
-  message(cat(crayon::silver("Clean final output")))
+  message(cat(crayon::magenta("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
@@ -189,20 +189,20 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
   df_students <- g4sr::gfs_student_details(academicYear)
   df_students_details <- g4sr::gfs_student_edu_details(academicYear)
 
-  message(cat(crayon::silver("Merge datasets")))
+  message(cat(crayon::magenta("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_students, df_attendance_student_session_marks, by = c("id" = "student_id"))
   df <- dplyr::left_join(df, df_attendance_codes, by = c("session_mark_id" = "id"))
   df <- dplyr::left_join(df, df_students_details, by = c("id" = "student_id"))
 
-  message(cat(crayon::silver("Compute metadata")))
+  message(cat(crayon::magenta("Compute metadata")))
 
   ## Create
   df <- dplyr::filter(df, !is.na(date))
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
 
-  message(cat(crayon::silver("Clean final output")))
+  message(cat(crayon::magenta("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
@@ -213,7 +213,7 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
   df <- dplyr::distinct(df)
 
   if (is.null(session)) {
-    message(cat(crayon::silver("No session preference provided.  Returning AM and PM.")))
+    message(cat(crayon::magenta("No session preference provided.  Returning AM and PM.")))
     df <- df
   } else {
     df <- dplyr::filter(df, Session == toupper(session))
@@ -254,7 +254,7 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
   df_timetables <- g4sr::gfs_timetables(academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear)
 
-  message(cat(crayon::silver("Merge datasets")))
+  message(cat(crayon::magenta("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_students, df_attendance_student_lesson_marks, by = c("id" = "student_id"))
@@ -265,14 +265,14 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
   df_02 <- dplyr::left_join(df_02, df_teachers, by = c("teacher_ids" = "id"))
   df <- dplyr::left_join(df, df_02, by = c("class_id" = "id"))
 
-  message(cat(crayon::silver("Compute metadata")))
+  message(cat(crayon::magenta("Compute metadata")))
 
   ## Create
   df <- dplyr::filter(df, !is.na(date))
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$registration_group, ")")
   df$Teacher = paste0(df$title, " ", df$preferred_last_name.y)
 
-  message(cat(crayon::silver("Clean final output")))
+  message(cat(crayon::magenta("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c("Lesson.ID" = name, "Lesson" = display_name, Teacher, "Room" = rooms,

@@ -36,7 +36,7 @@ hhs_class_list_teacher <- function(academicYear, staffCode = NULL, yearGroupFrom
   df_att_grade_types <- dplyr::bind_rows(df_att_grade_types)
   df_att_grade_types <- dplyr::distinct(df_att_grade_types)
 
-  message(cat(crayon::silver("Tidy datasets")))
+  message(cat(crayon::magenta("Tidy datasets")))
 
   ## Tidy general
   df_students_general_02 <- dplyr::select(df_students_general, c(student_id, name, value))
@@ -66,7 +66,7 @@ hhs_class_list_teacher <- function(academicYear, staffCode = NULL, yearGroupFrom
   df_att <- dplyr::select(df_att, c("GFSID" = grades.student_id, "Subject" = name.y, "Target" = grades.name))
   df_att <- dplyr::distinct(df_att)
 
-  message(cat(crayon::silver("Merge datasets")))
+  message(cat(crayon::magenta("Merge datasets")))
 
   ## Merge datasets
   df <- dplyr::left_join(df_teaching_groups, df_teaching_groups_students, by = c("id" = "group_id"))
@@ -79,13 +79,13 @@ hhs_class_list_teacher <- function(academicYear, staffCode = NULL, yearGroupFrom
   df <- dplyr::left_join(df, df_students_general_02, by = c("student_ids" = "student_id"))
   df <- dplyr::left_join(df, df_att, by = c("student_ids" = "GFSID", "name.y" = "Subject"))
 
-  message(cat(crayon::silver("Compute metadata")))
+  message(cat(crayon::magenta("Compute metadata")))
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$registration_group, ")")
   df <- dplyr::mutate(df, WBr.PP = ifelse(grepl(pattern = "english|scottish|welsh", x = Ethnicity, ignore.case = TRUE) & PP == "True", "True", "False"))
 
-  message(cat(crayon::silver("Clean final output")))
+  message(cat(crayon::magenta("Clean final output")))
 
   ## Clean and filter
   df <- dplyr::select(df, c("Staff.Code" = code.y, "Year.Group" = year_group, "Reg" = registration_group, "Subject" = name.y,
@@ -95,16 +95,16 @@ hhs_class_list_teacher <- function(academicYear, staffCode = NULL, yearGroupFrom
                             SEN, SEN.Notes, Keyworker, CP.CAF))
 
   if (is.null(staffCode)) {
-    message(cat(crayon::silver("No staffCode provided.  Return all.")))
+    message(cat(crayon::magenta("No staffCode provided.  Return all.")))
     df <- df
   } else {
-    message(cat(crayon::silver("Returning class list for", staffCode)))
+    message(cat(crayon::magenta("Returning class list for", staffCode)))
     df <- dplyr::filter(df, Staff.Code %in% staffCode)
   }
 
   df <- dplyr::distinct(df)
 
-  message(cat(crayon::silver("Impute missing data")))
+  message(cat(crayon::magenta("Impute missing data")))
 
   ## Impute missing data
   df$HML.Band <- ifelse(is.na(df$HML.Band), "Unknown.HML", df$HML.Band)
@@ -140,7 +140,7 @@ hhs_class_list_student <- function(academicYear, student) {
   df_students_sensitive <- g4sr::gfs_student_sensitive(academicYear = academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear = academicYear)
 
-  message(cat(crayon::silver("Tidy datasets")))
+  message(cat(crayon::magenta("Tidy datasets")))
 
   ## Tidy general
   df_students_general_02 <- dplyr::select(df_students_general, c(student_id, name, value))
@@ -161,7 +161,7 @@ hhs_class_list_student <- function(academicYear, student) {
   df_students_sensitive_02 <- dplyr::select(df_students_sensitive_02, c(student_id, "LAC" = Looked.after, Ethnicity, EAL, FSM,
                                                                         "PP" = Pupil.Premium.Indicator))
 
-  message(cat(crayon::silver("Merge datasets")))
+  message(cat(crayon::magenta("Merge datasets")))
 
   ## Merge datasets
   df <- dplyr::left_join(df_teaching_groups, df_teaching_groups_students, by = c("id" = "group_id"))
@@ -173,13 +173,13 @@ hhs_class_list_student <- function(academicYear, student) {
   df <- dplyr::left_join(df, df_students_sensitive_02, by = c("student_ids" = "student_id"))
   df <- dplyr::left_join(df, df_students_general_02, by = c("student_ids" = "student_id"))
 
-  message(cat(crayon::silver("Compute metadata")))
+  message(cat(crayon::magenta("Compute metadata")))
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$registration_group, ")")
   df <- dplyr::mutate(df, WBr.PP = ifelse(grepl(pattern = "english|scottish|welsh", x = Ethnicity, ignore.case = TRUE) & PP == "True", "True", "False"))
 
-  message(cat(crayon::silver("Clean final output")))
+  message(cat(crayon::magenta("Clean final output")))
 
   ## Clean
   df <- dplyr::select(df, c("UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, "Surname" = preferred_last_name.x,
@@ -191,7 +191,7 @@ hhs_class_list_student <- function(academicYear, student) {
   df <- dplyr::filter(df, grepl(pattern = student, x = df$Surname.Forename, ignore.case = TRUE))
   df <- dplyr::distinct(df)
 
-  message(cat(crayon::silver("Impute missing data")))
+  message(cat(crayon::magenta("Impute missing data")))
 
   ## Impute missing data
   df$HML.Band <- ifelse(is.na(df$HML.Band), "Unknown.HML", df$HML.Band)

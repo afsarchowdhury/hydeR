@@ -18,7 +18,7 @@ hhs_student_details_general <- function(academicYear) {
   df_students_details <- g4sr::gfs_student_edu_details(academicYear = academicYear)
   df_students_sensitive <- g4sr::gfs_student_sensitive(academicYear = academicYear)
 
-  message(cat(crayon::silver("Tidy datasets")))
+  message(cat(crayon::magenta("Tidy datasets")))
 
   ## Tidy general
   df_students_general_02 <- dplyr::select(df_students_general, c(student_id, name, value))
@@ -46,20 +46,20 @@ hhs_student_details_general <- function(academicYear) {
   ## Tidy details
   df_students_details_02 <- dplyr::select(df_students_details, c(student_id, upn, national_curriculum_year, registration_group))
 
-  message(cat(crayon::silver("Merge datasets")))
+  message(cat(crayon::magenta("Merge datasets")))
 
   ## Merge datasets
   df <- dplyr::left_join(df_students, df_students_details_02, by = c("id" = "student_id"))
   df <- dplyr::left_join(df, df_students_general_02, by = c("id" = "student_id"))
   df <- dplyr::left_join(df, df_students_sensitive_02, by = c("id" = "student_id"))
 
-  message(cat(crayon::silver("Compute metadata")))
+  message(cat(crayon::magenta("Compute metadata")))
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
   df <- dplyr::mutate(df, WBr.PP = ifelse(grepl(pattern = "english|scottish|welsh", x = Ethnicity, ignore.case = TRUE) & PP == "True", "True", "False"))
 
-  message(cat(crayon::silver("Clean final output")))
+  message(cat(crayon::magenta("Clean final output")))
 
   ## Clean and filter
   df <- dplyr::select(df, c("Year.Group" = national_curriculum_year, "UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
@@ -71,7 +71,7 @@ hhs_student_details_general <- function(academicYear) {
   # df$Stay <- lubridate::as.duration(df$Date.Leaving - df$Date.Admission)
   df <- dplyr::distinct(df)
 
-  message(cat(crayon::silver("Impute missing data")))
+  message(cat(crayon::magenta("Impute missing data")))
 
   ## Impute missing data
   df$HML.Band <- ifelse(is.na(df$HML.Band), "Unknown.HML", df$HML.Band)
@@ -98,10 +98,10 @@ hhs_student_send_search <- function(academicYear, notesSearch) {
   df <- hhs_student_details_general(academicYear = academicYear)
 
   ## Search
-  message(cat(crayon::silver("Search SEND notes for", notesSearch)))
+  message(cat(crayon::magenta("Search SEND notes for", notesSearch)))
   df <- dplyr::filter(df, grepl(pattern = notesSearch, x = SEN.Notes, ignore.case = TRUE))
 
-  message(cat(crayon::silver("Clean final output")))
+  message(cat(crayon::magenta("Clean final output")))
 
   ## Clean and filter
   df <- dplyr::select(df, c(Year.Group, UPN, GFSID, Surname.Forename.Reg, Gender, EAL, PP, WBr.PP, HML.Band, UCI,
