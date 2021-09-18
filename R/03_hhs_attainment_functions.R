@@ -30,7 +30,7 @@ hhs_exam_results <- function(academicYear, yearGroup, type = NULL) {
   df_teaching_groups_teachers <- g4sr::gfs_teaching_groups_teachers(academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear)
 
-  message(cat(crayon::magenta("Tidy datasets")))
+  message(cat(crayon::silver("Tidy datasets")))
 
   ## Tidy general
   df_students_general_02 <- dplyr::select(df_students_general, c(student_id, name, value))
@@ -50,7 +50,7 @@ hhs_exam_results <- function(academicYear, yearGroup, type = NULL) {
   df_students_sensitive_02 <- dplyr::select(df_students_sensitive_02, c(student_id, "PP" = Pupil.Premium.Indicator))
   df_students_sensitive_02 <- dplyr::distinct(df_students_sensitive_02)
 
-  message(cat(crayon::magenta("Merge datasets")))
+  message(cat(crayon::silver("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_att_exam_results, df_subjects, by = c("subject_id" = "id"))
@@ -66,13 +66,13 @@ hhs_exam_results <- function(academicYear, yearGroup, type = NULL) {
   df_02 <- dplyr::distinct(df_02)
   df <- dplyr::left_join(df, df_02, by = c("student_id" = "student_ids", "code" = "Subject.Code"))
 
-  message(cat(crayon::magenta("Compute metadata")))
+  message(cat(crayon::silver("Compute metadata")))
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
   df$Grade.Type <- paste0("External examination")
 
-  message(cat(crayon::magenta("Clean final output")))
+  message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group, "Qualification.Title" = qualification_title.x,
@@ -81,7 +81,7 @@ hhs_exam_results <- function(academicYear, yearGroup, type = NULL) {
                             "Reg" = registration_group, "Gender" = sex, PP, HML.Band, Grade.Type, "Grade" = grade))
   df <- dplyr::distinct(df)
 
-  message(cat(crayon::magenta("Impute missing data")))
+  message(cat(crayon::silver("Impute missing data")))
 
   ## Impute missing data
   df$HML.Band <- ifelse(is.na(df$HML.Band), "Unknown.HML", df$HML.Band)
@@ -182,7 +182,7 @@ hhs_attainment_multiple <- function(academicYear, yearGroupFrom = "7", yearGroup
   df_teaching_groups_teachers <- g4sr::gfs_teaching_groups_teachers(academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear)
 
-  message(cat(crayon::magenta("Merge datasets")))
+  message(cat(crayon::silver("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_att_grades, df_att_grade_types, by = c("grades.grade_type_id" = "id"))
@@ -197,12 +197,12 @@ hhs_attainment_multiple <- function(academicYear, yearGroupFrom = "7", yearGroup
   df_02 <- dplyr::distinct(df_02)
   df <- dplyr::left_join(df, df_02, by = c("grades.student_id" = "student_ids", "code" = "Subject.Code"))
 
-  message(cat(crayon::magenta("Compute metadata")))
+  message(cat(crayon::silver("Compute metadata")))
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
 
-  message(cat(crayon::magenta("Clean final output")))
+  message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group, "Subject" = name.y, Class,

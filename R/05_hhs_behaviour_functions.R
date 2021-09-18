@@ -27,7 +27,7 @@ hhs_behaviour_events_range <- function(academicYear, goDateStart, goDateEnd) {
   df_staff <- g4sr::gfs_users_staff()
   df_cal <- g4sr::gfs_calendar(academicYear)
 
-  message(cat(crayon::magenta("Merge datasets")))
+  message(cat(crayon::silver("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_behaviour_events, df_behaviour_event_types, by = c("event_type_id" = "id"))
@@ -44,12 +44,12 @@ hhs_behaviour_events_range <- function(academicYear, goDateStart, goDateEnd) {
   df_cal <- dplyr::select(df_cal, c("Date" = date, "School.Week" = week, "Day.Type" = day_type_code))
   df <- dplyr::left_join(df, df_cal, by = c("event_date" = "Date"))
 
-  message(cat(crayon::magenta("Compute metadata")))
+  message(cat(crayon::silver("Compute metadata")))
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
 
-  message(cat(crayon::magenta("Clean final output")))
+  message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c("Event.ID" = id, "Staff" = display_name, "Email.Staff" = email_address,
@@ -64,7 +64,7 @@ hhs_behaviour_events_range <- function(academicYear, goDateStart, goDateEnd) {
   df <- dplyr::distinct(df)
   df$Email.Staff <- tolower(df$Email.Staff)
 
-  message(cat(crayon::magenta("Lookup student demographic data")))
+  message(cat(crayon::silver("Lookup student demographic data")))
 
   ## Student demographics
   df_stu <- hhs_student_details_general(academicYear)

@@ -23,7 +23,7 @@ hhs_timetable <- function(academicYear) {
   df_teaching_department <- g4sr::gfs_teaching_departments(academicYear)
   df_student_clean <- hhs_student_details_general(academicYear)
 
-  message(cat(crayon::magenta("Clean datasets")))
+  message(cat(crayon::silver("Clean datasets")))
 
   ## Clean datasets
   # Clean timetable
@@ -56,7 +56,7 @@ hhs_timetable <- function(academicYear) {
   df_student_clean_02 <- dplyr::select(df_student_clean, c(UPN:Surname.Forename.Reg, Gender:HML.Band, SEN))
   df_student_clean_02$GFSID <- as.integer(df_student_clean_02$GFSID)
 
-  message(cat(crayon::magenta("Merge datasets")))
+  message(cat(crayon::silver("Merge datasets")))
 
   ## Merge datasets
   df <- dplyr::left_join(df_calendar_02, df_timetable_02, by = c("Week", "Day"))
@@ -68,7 +68,7 @@ hhs_timetable <- function(academicYear) {
   df <- dplyr::left_join(df, df_teaching_department_02, by = c("department_id" = "id"))
   df <- dplyr::left_join(df, df_student_clean_02, by = c("student_id" = "GFSID"))
 
-  message(cat(crayon::magenta("Clean final output")))
+  message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
   df <- dplyr::mutate(df, student_end = ifelse(student_end > max(Date), NA, student_end))
