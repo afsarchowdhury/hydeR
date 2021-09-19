@@ -1,7 +1,7 @@
 Package: hydeR
 Type: Package
 Title: R functions for Hyde High School
-Version: 0.2.3
+Version: 0.2.4
 Authors@R: person("Afsar", "Chowdhury", email = "a.chowdhury@hydehighschool.uk",
                   role = c("aut", "cre"))
 Maintainer: Afsar Chowdhury <a.chowdhury@hydehighschool.uk>
@@ -24,6 +24,7 @@ Imports:
     jsonlite,
     lubridate,
     magrittr,
+    scales,
     tidyr
 Remotes:
     afsarchowdhury/g4sr

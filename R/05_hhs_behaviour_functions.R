@@ -74,3 +74,91 @@ hhs_behaviour_events_range <- function(academicYear, goDateStart, goDateEnd) {
   ## Return
   return(df)
 }
+
+
+## Clean school exclusion data
+#' Get clean school exclusion data.
+#'
+#' Returns clean school exclusion data for chosen academic year and date range,
+#' along with a line plot.
+#' @importFrom magrittr "%>%"
+#' @examples
+#' hhs_exclusions(2022, "2021-09-01", "2021-09-30")
+#' @export
+hhs_exclusions <- function(academicYear, goDateStart, goDateEnd) {
+  ## Mesaage
+  message(cat(crayon::cyan("Generating clean exclusion data for", goDateStart, "to", goDateEnd)))
+
+  ## Import school information
+  my_school <- g4sr::gfs_school()
+  my_school_name <- my_school$name
+  my_school_years <- my_school$academic_years
+  my_school_years_current <- my_school$current_academic_year
+
+  ## Import student data
+  df_student_details <- hhs_student_details_general(academicYear = academicYear)
+  df_student_details$Year.Group <- factor(df_student_details$Year.Group,
+                                          levels = c("7", "8", "9", "10", "11"))
+
+  ## Import attendance data
+  df_student_attendance_session <- hhs_attendance_student_session_range(
+    academicYear = academicYear,
+    goDateStart = goDateStart,
+    goDateEnd = goDateEnd
+  )
+  df_student_attendance_session$Year.Group <- factor(df_student_attendance_session$Year.Group,
+                                                     levels = c("7", "8", "9", "10", "11"))
+
+  message(cat(crayon::silver("Clean data")))
+
+  ## Filter exclusions
+  df_exclusions <- df_student_attendance_session %>%
+    dplyr::filter(Session.Mark == "E") %>%
+    dplyr::mutate(Date = lubridate::as_date(Date)) %>%
+    dplyr::group_by(UPN) %>%
+    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::ungroup()
+
+  message(cat(crayon::silver("Merge datasets")))
+
+  ## Merge
+  df <- dplyr::left_join(df_exclusions, df_student_details, by = c("UPN"))
+
+  message(cat(crayon::silver("Generate plot")))
+
+  ## Plot
+  p <- df_student_attendance_session %>%
+    dplyr::filter(Session.Mark == "E") %>%
+    dplyr::mutate(Date = lubridate::as_date(Date)) %>%
+    dplyr::group_by(Year.Group, Date, UPN, Surname.Forename.Reg) %>%
+    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::ungroup() %>%
+    dplyr::arrange(Date) %>%
+    dplyr::group_by(Year.Group) %>%
+    dplyr::mutate(Cum.Sum = cumsum(n)) %>%
+    dplyr::ungroup() %>%
+    ggplot2::ggplot(ggplot2::aes(x = Date, y = Cum.Sum)) +
+    ggplot2::geom_step(lwd = 1) +
+    ggplot2::geom_point(ggplot2::aes(colour = Year.Group), size = 4) +
+    #geom_point(col = "olivedrab3", size = 4) +
+    #scale_y_continuous(breaks = seq(0, 100, 2)) +
+    ggplot2::scale_x_date(
+      expand = c(0, 0.5),
+      labels = scales::label_date_short(format = c("%Y", "%b", "%d"))#,
+      #breaks = scales::breaks_width("2 days")
+    ) +
+    ggplot2::labs(x = NULL, y = "Count of sessions",
+                  title = "School exclusions",
+                  subtitle = paste0("Cumulative count of sessions vs. time, faceted by year group.",
+                                    "\n", goDateStart, " to ", goDateEnd, "."),
+                  caption = paste0(my_school_name, " | Data retrieved using R package g4sr on ", Sys.Date())) +
+    ggplot2::facet_wrap(~Year.Group, nrow = 1) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      legend.position = "none"#,
+      #axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1/3)
+    )
+
+  ## Return
+  return(list(plot = p, data = df))
+}

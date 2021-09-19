@@ -43,6 +43,7 @@ hhs_attendance_student_session <- function(academicYear, goDate, session = NULL)
                             "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
                             "Date" = date, "Session" = session, "Session.Mark" = code, "Session.Label" = label,
                             "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes))
+  df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
   # Encode present code
   df <- dplyr::mutate(df, Session.Mark = ifelse(Session.Mark == "\\", "/", Session.Mark))
@@ -109,6 +110,7 @@ hhs_attendance_student_lesson <- function(academicYear, goDate) {
                             "Date" = date, "Subject" = subject_code, "Class" = group_code, "Lesson.Mark" = code.x,
                             "Lesson.Label" = label,
                             "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes))
+  df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
   # Encode present code
   df <- dplyr::mutate(df, Lesson.Mark = ifelse(Lesson.Mark == "\\", "/", Lesson.Mark))
@@ -157,6 +159,7 @@ hhs_attendance_student_summary <- function(academicYear) {
                             "Possible.Session" = possible_sessions, "Present" = present, "Approved.EA" = approved_educational_activity,
                             "Late" = late, "Authorised.Absence" = authorised_absence, "Unauthorised.Absence" = unauthorised_absence,
                             "Attendance.No.Required" = attendance_not_required, "Missing.Mark" = missing_mark))
+  df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
 
   ## Return
@@ -214,6 +217,7 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
                             "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
                             "Date" = date, "Session" = session, "Session.Mark" = code, "Session.Label" = label,
                             "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes))
+  df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
   # Encode present code
   df <- dplyr::mutate(df, Session.Mark = ifelse(Session.Mark == "\\", "/", Session.Mark))
@@ -288,6 +292,7 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
                             "Date" = date, "Subject" = subject_code, "Class" = group_code, "Lesson.Mark" = code.x,
                             "Lesson.Label" = label,
                             "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes))
+  df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
   # Encode present code
   df <- dplyr::mutate(df, Lesson.Mark = ifelse(Lesson.Mark == "\\", "/", Lesson.Mark))
