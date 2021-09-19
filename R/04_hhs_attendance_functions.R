@@ -44,6 +44,8 @@ hhs_attendance_student_session <- function(academicYear, goDate, session = NULL)
                             "Date" = date, "Session" = session, "Session.Mark" = code, "Session.Label" = label,
                             "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes))
   df <- dplyr::distinct(df)
+  # Encode present code
+  df <- dplyr::mutate(df, Session.Mark = ifelse(Session.Mark == "\\", "/", Session.Mark))
 
   if (is.null(session)) {
     message(cat(crayon::silver("No session preference provided.  Returning AM and PM.")))
@@ -108,6 +110,8 @@ hhs_attendance_student_lesson <- function(academicYear, goDate) {
                             "Lesson.Label" = label,
                             "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes))
   df <- dplyr::distinct(df)
+  # Encode present code
+  df <- dplyr::mutate(df, Lesson.Mark = ifelse(Lesson.Mark == "\\", "/", Lesson.Mark))
   df <- dplyr::arrange(df, Lesson)
 
   ## Return
@@ -211,6 +215,8 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
                             "Date" = date, "Session" = session, "Session.Mark" = code, "Session.Label" = label,
                             "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes))
   df <- dplyr::distinct(df)
+  # Encode present code
+  df <- dplyr::mutate(df, Session.Mark = ifelse(Session.Mark == "\\", "/", Session.Mark))
 
   if (is.null(session)) {
     message(cat(crayon::silver("No session preference provided.  Returning AM and PM.")))
@@ -283,6 +289,8 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
                             "Lesson.Label" = label,
                             "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes))
   df <- dplyr::distinct(df)
+  # Encode present code
+  df <- dplyr::mutate(df, Lesson.Mark = ifelse(Lesson.Mark == "\\", "/", Lesson.Mark))
   df <- dplyr::arrange(df, Date, Lesson, Lesson.ID)
 
   ## Return

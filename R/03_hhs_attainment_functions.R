@@ -124,6 +124,8 @@ hhs_attainment <- function(academicYear, yearGroup) {
   df_teaching_groups_teachers <- g4sr::gfs_teaching_groups_teachers(academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear)
 
+  message(cat(crayon::silver("Merge datasets")))
+
   ## Merge
   df <- dplyr::left_join(df_att_grades, df_att_grade_types, by = c("grades.grade_type_id" = "id"))
   df <- dplyr::left_join(df, df_teaching_subjects, by = c("grades.subject_id" = "id"))
@@ -137,8 +139,14 @@ hhs_attainment <- function(academicYear, yearGroup) {
   df_02 <- dplyr::distinct(df_02)
   df <- dplyr::left_join(df, df_02, by = c("grades.student_id" = "student_ids", "code" = "Subject.Code"))
 
-  ## Tidy
+  message(cat(crayon::silver("Compute metadata")))
+
+  ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+
+  message(cat(crayon::silver("Clean final output")))
+
+  ## Tidy
   df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group, "Subject" = name.y, Class,
                             "UPN" = upn, "GFSID" = grades.student_id, Surname.Forename.Reg,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
