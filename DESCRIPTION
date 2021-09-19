@@ -25,6 +25,7 @@ Imports:
     lubridate,
     magrittr,
     scales,
+    stringr,
     tidyr
 Remotes:
     afsarchowdhury/g4sr
