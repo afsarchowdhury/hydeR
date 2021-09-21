@@ -53,7 +53,7 @@ hhs_timetable <- function(academicYear) {
                                                                  "Year.Group" = year_group, department_id))
   df_teaching_department_02 <- dplyr::rename(df_teaching_department, "Department" = name)
   # Clean student
-  df_student_clean_02 <- dplyr::select(df_student_clean, c(UPN:Surname.Forename.Reg, Gender:HML.Band, SEN))
+  df_student_clean_02 <- dplyr::select(df_student_clean, c(UPN:HML.Band, SEN))
   df_student_clean_02$GFSID <- as.integer(df_student_clean_02$GFSID)
 
   message(cat(crayon::silver("Merge datasets")))
