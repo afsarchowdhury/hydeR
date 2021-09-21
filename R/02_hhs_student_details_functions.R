@@ -63,8 +63,8 @@ hhs_student_details_general <- function(academicYear) {
 
   ## Clean and filter
   df <- dplyr::select(df, c("Year.Group" = national_curriculum_year, "UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
-                            "Surname" = preferred_last_name, "Forename" = preferred_first_name, "Gender" = sex,
-                            Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, Ad.No, UCI, Age.Reading, Age.Spelling,
+                            "Surname" = preferred_last_name, "Forename" = preferred_first_name, "Reg" = registration_group,
+                            "Gender" = sex, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, Ad.No, UCI, Age.Reading, Age.Spelling,
                             SEN, SEN.Notes, Keyworker, LAC, CP.CAF, Date.Admission))
   df <- dplyr::mutate_all(df, .funs = as.character)
   # df <- dplyr::mutate_at(df, .vars = c("Date.Admission", "Date.Leaving"), .funs = lubridate::mdy_hms)
