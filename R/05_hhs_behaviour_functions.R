@@ -116,16 +116,12 @@ hhs_exclusions <- function(academicYear, goDateStart, goDateEnd) {
 
   ## Filter exclusions
   df_exclusions <- df_student_attendance_session %>%
-    dplyr::filter(Session.Mark == "E") %>%
-    dplyr::mutate(Date = lubridate::as_date(Date)) %>%
-    dplyr::group_by(UPN) %>%
-    dplyr::summarise(n = dplyr::n()) %>%
-    dplyr::ungroup()
+    dplyr::filter(Session.Mark == "E")
 
   message(cat(crayon::silver("Merge datasets")))
 
   ## Merge
-  df <- dplyr::left_join(df_exclusions, df_student_details, by = c("UPN"))
+  df <- dplyr::left_join(df_exclusions, df_student_details)
 
   message(cat(crayon::silver("Generate plot")))
 
