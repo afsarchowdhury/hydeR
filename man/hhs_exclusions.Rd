@@ -6,6 +6,13 @@
 \usage{
 hhs_exclusions(academicYear, goDateStart, goDateEnd)
 }
+\arguments{
+\item{academicYear}{academic year as integer.}
+
+\item{goDateStart}{start date of range as string in the form yyyy-mm-dd.}
+
+\item{goDateEnd}{end date of range as string in the form yyyy-mm-dd.}
+}
 \description{
 Returns clean school exclusion data for chosen academic year and date range,
 along with a line plot.

@@ -82,6 +82,9 @@ hhs_behaviour_events_range <- function(academicYear, goDateStart, goDateEnd) {
 #' Returns clean school exclusion data for chosen academic year and date range,
 #' along with a line plot.
 #' @importFrom magrittr "%>%"
+#' @param academicYear academic year as integer.
+#' @param goDateStart start date of range as string in the form yyyy-mm-dd.
+#' @param goDateEnd end date of range as string in the form yyyy-mm-dd.
 #' @examples
 #' hhs_exclusions(2022, "2021-09-01", "2021-09-30")
 #' @export

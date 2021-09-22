@@ -1,7 +1,7 @@
 Package: hydeR
 Type: Package
 Title: R functions for Hyde High School
-Version: 0.2.5
+Version: 0.2.6
 Authors@R: person("Afsar", "Chowdhury", email = "a.chowdhury@hydehighschool.uk",
                   role = c("aut", "cre"))
 Maintainer: Afsar Chowdhury <a.chowdhury@hydehighschool.uk>

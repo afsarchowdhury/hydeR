@@ -222,3 +222,100 @@ hhs_attainment_multiple <- function(academicYear, yearGroupFrom = "7", yearGroup
   ## Return
   return(df)
 }
+
+## Clean science targets
+#' Get clean science targets.
+#'
+#' Returns clean details of science targets in the chosen academic year for all
+#' year groups.
+#' @importFrom magrittr "%>%"
+#' @param academicYear academic year as integer.
+#' @examples
+#' hhs_targets_science(2022)
+#' @export
+hhs_targets_science <- function(academicYear) {
+  ## Message
+  message(cat(crayon::cyan("Generating clean science targets for", academicYear)))
+
+  ## Import data
+  df_attainment <- hhs_attainment_multiple(academicYear = academicYear)
+  df_student_details <- hhs_student_details_general(academicYear = academicYear)
+
+  message(cat(crayon::silver("Filter for science")))
+
+  ## Filter data
+  # for target
+  df_target <- df_attainment %>%
+    dplyr::filter(Grade.Type == "Target")
+  # for science
+  df_target_sci <- df_target %>%
+    dplyr::filter(Subject %in% c("Science", "Combined Science 9-1", "Biology", "Chemistry", "Physics"))
+
+  ## Rename triple science classes
+  df_target_sci <- df_target_sci %>%
+    dplyr::mutate(Class = ifelse(grepl(pattern = "Yr10X/Bi|Yr10X/Ch|Yr10X/Ph", x = Class, ignore.case = TRUE), "Yr10ab/TrX",
+                                 ifelse(grepl(pattern = "Yr10Y/Bi|Yr10Y/Ch|Yr10Y/Ph", x = Class, ignore.case = TRUE), "Yr10ab/TrY",
+                                        ifelse(grepl(pattern = "Yr10Z/Bi|Yr10Z/Ch|Yr10Z/Ph", x = Class, ignore.case = TRUE), "Yr10ab/TrZ", Class))))
+
+  df_target_sci <- df_target_sci %>%
+    dplyr::mutate(Class = ifelse(grepl(pattern = "Yr11X/Bi|Yr11X/Ch|Yr11X/Ph", x = Class, ignore.case = TRUE), "Yr11ab/TrX",
+                                 ifelse(grepl(pattern = "Yr11Y/Bi|Yr11Y/Ch|Yr11Y/Ph", x = Class, ignore.case = TRUE), "Yr11ab/TrY",
+                                        ifelse(grepl(pattern = "Yr11Z/Bi|Yr11Z/Ch|Yr11Z/Ph", x = Class, ignore.case = TRUE), "Yr11ab/TrZ", Class))))
+
+  message(cat(crayon::silver("Reshape dataset")))
+
+  ## Pivot wide
+  df_target_sci_wide <- df_target_sci %>%
+    dplyr::select(-c(Staff.Code, Grade.Type)) %>%
+    dplyr::distinct() %>%
+    tidyr::pivot_wider(names_from = Subject, values_from = Grade, values_fill = NA) %>%
+    data.frame(check.names = TRUE)
+
+  ## Convert combined science
+  df_target_sci_wide <- df_target_sci_wide %>%
+    tidyr::separate(col = Combined.Science.9.1, into = c("Combined.Science.1", "Combined.Science.2"), sep = "/") %>%
+    dplyr::mutate_at(.vars = c("Combined.Science.1",
+                               "Combined.Science.2"), list(as.integer))
+
+  df_target_sci_wide <- df_target_sci_wide %>%
+    dplyr::mutate(Combined.Science = (Combined.Science.1 + Combined.Science.2) / 2) %>%
+    dplyr::select(-c(Combined.Science.1, Combined.Science.2)) %>%
+    dplyr::mutate_at(.vars = c("Combined.Science"), list(as.character))
+
+  # df_target_sci_wide <- df_target_sci_wide %>%
+  #   mutate(Science = ifelse(is.na(Science), paste0(Combined.Science), Science)) %>%
+  #   mutate(Science = ifelse(Science == "NA", NA, Science)) %>%
+  #   select(-c(Combined.Science))
+
+  message(cat(crayon::silver("Merge datasets")))
+
+  ## Retain PP and HML data from student details and merge
+  df_target_sci_wide <- df_target_sci_wide %>%
+    dplyr::select(c(UPN, Class, Science:Combined.Science))
+
+  df <- dplyr::left_join(df_student_details, df_target_sci_wide, by = c("UPN"))
+
+  message(cat(crayon::silver("Compute metadata")))
+
+  ## Encode academic year
+  df <- df %>%
+    dplyr::mutate(Ac.Year = ifelse(Year.Group == "11", paste0("c", academicYear),
+                                   ifelse(Year.Group == "10", paste0("c", academicYear + 1),
+                                          ifelse(Year.Group == "9", paste0("c", academicYear + 2),
+                                                 ifelse(Year.Group == "8", paste0("c", academicYear + 3),
+                                                        ifelse(Year.Group == "7", paste0("c", academicYear + 4), NA))))))
+
+  message(cat(crayon::silver("Clean final output")))
+
+  ## Final selection
+  df <- df %>%
+    dplyr::select(c(Ac.Year, Year.Group, Class, Surname.Forename.Reg, Gender, Reg, PP,
+                    HML.Band, Science, Combined.Science, Biology, Chemistry, Physics))
+  df <- dplyr::distinct(df)
+  df$Year.Group <- factor(df$Year.Group, levels = c("7", "8", "9", "10", "11"))
+  df <- df %>% dplyr::arrange(Year.Group, Class, Surname.Forename.Reg)
+  df <- df %>% dplyr::mutate_at(.vars = c("Year.Group"), list(as.character))
+
+  ## Return
+  return(df)
+}
