@@ -4,15 +4,17 @@
 \alias{hhs_targets_science}
 \title{Get clean science targets.}
 \usage{
-hhs_targets_science(academicYear)
+hhs_targets_science(academicYear, layout = "wide")
 }
 \arguments{
 \item{academicYear}{academic year as integer.}
+
+\item{layout}{layout as string.  Choice of "wide" or "long".  Defaults is "wide".}
 }
 \description{
 Returns clean details of science targets in the chosen academic year for all
 year groups.
 }
 \examples{
-hhs_targets_science(2022)
+hhs_targets_science(2022, layout = "wide")
 }

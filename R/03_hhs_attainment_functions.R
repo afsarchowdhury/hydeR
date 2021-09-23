@@ -230,10 +230,11 @@ hhs_attainment_multiple <- function(academicYear, yearGroupFrom = "7", yearGroup
 #' year groups.
 #' @importFrom magrittr "%>%"
 #' @param academicYear academic year as integer.
+#' @param layout layout as string.  Choice of "wide" or "long".  Defaults is "wide".
 #' @examples
-#' hhs_targets_science(2022)
+#' hhs_targets_science(2022, layout = "wide")
 #' @export
-hhs_targets_science <- function(academicYear) {
+hhs_targets_science <- function(academicYear, layout = "wide") {
   ## Message
   message(cat(crayon::cyan("Generating clean science targets for", academicYear)))
 
@@ -241,7 +242,7 @@ hhs_targets_science <- function(academicYear) {
   df_attainment <- hhs_attainment_multiple(academicYear = academicYear)
   df_student_details <- hhs_student_details_general(academicYear = academicYear)
 
-  message(cat(crayon::silver("Filter for science")))
+  message(cat(crayon::silver("Subset data")))
 
   ## Filter data
   # for target
@@ -315,6 +316,18 @@ hhs_targets_science <- function(academicYear) {
   df$Year.Group <- factor(df$Year.Group, levels = c("7", "8", "9", "10", "11"))
   df <- df %>% dplyr::arrange(Year.Group, Class, Surname.Forename.Reg)
   df <- df %>% dplyr::mutate_at(.vars = c("Year.Group"), list(as.character))
+
+  message(cat(crayon::silver("Reshaping dataset")))
+
+  if (layout == "long") {
+    message(cat(crayon::silver("Returning long-form")))
+    message(cat(crayon::red("Warning: dropped students with missing targets")))
+    df <- df %>%
+      tidyr::pivot_longer(cols = c(Science:Physics), names_to = "Subject", values_to = "Target", values_drop_na = TRUE)
+  } else {
+    message(cat(crayon::silver("Returning wide-form")))
+    df <- df
+  }
 
   ## Return
   return(df)
