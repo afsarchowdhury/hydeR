@@ -300,18 +300,21 @@ hhs_targets_science <- function(academicYear, layout = "wide") {
 
   ## Encode academic year
   df <- df %>%
-    dplyr::mutate(Ac.Year = ifelse(Year.Group == "11", paste0("c", academicYear),
-                                   ifelse(Year.Group == "10", paste0("c", academicYear + 1),
-                                          ifelse(Year.Group == "9", paste0("c", academicYear + 2),
-                                                 ifelse(Year.Group == "8", paste0("c", academicYear + 3),
-                                                        ifelse(Year.Group == "7", paste0("c", academicYear + 4), NA))))))
+    dplyr::mutate(
+      Ac.Year = ifelse(Year.Group == "11", paste0("c", academicYear),
+                       ifelse(Year.Group == "10", paste0("c", academicYear + 1),
+                              ifelse(Year.Group == "9", paste0("c", academicYear + 2),
+                                     ifelse(Year.Group == "8", paste0("c", academicYear + 3),
+                                            ifelse(Year.Group == "7", paste0("c", academicYear + 4), NA)))))
+    )
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Final selection
   df <- df %>%
-    dplyr::select(c(Ac.Year, Year.Group, Class, Surname.Forename.Reg, Gender, Reg, PP,
-                    HML.Band, Science, Combined.Science, Biology, Chemistry, Physics))
+    dplyr::select(c(Ac.Year, Year.Group, Class, UPN, GFSID, Surname.Forename.Reg,
+                    Gender, Reg, Ethnicity, PP, WBr.PP, HML.Band, SEN, SEN.Notes,
+                    Science, Combined.Science, Biology, Chemistry, Physics))
   df <- dplyr::distinct(df)
   df$Year.Group <- factor(df$Year.Group, levels = c("7", "8", "9", "10", "11"))
   df <- df %>% dplyr::arrange(Year.Group, Class, Surname.Forename.Reg)
