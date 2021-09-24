@@ -223,78 +223,47 @@ hhs_attainment_multiple <- function(academicYear, yearGroupFrom = "7", yearGroup
   return(df)
 }
 
-## Clean science targets
-#' Get clean science targets.
+## Clean targets
+#' Get clean targets.
 #'
-#' Returns clean details of science targets in the chosen academic year for all
+#' Returns clean details of targets in the chosen academic year and subject for all
 #' year groups.
 #' @importFrom magrittr "%>%"
 #' @param academicYear academic year as integer.
-#' @param layout layout as string.  Choice of "wide" or "long".  Defaults is "wide".
+#' @param subject subject as string.  .  Defaults to null.
 #' @examples
-#' hhs_targets_science(2022, layout = "wide")
+#' hhs_targets(2022, subject = "Combined Science 9-1")
 #' @export
-hhs_targets_science <- function(academicYear, layout = "wide") {
+hhs_targets <- function(academicYear, subject = NULL) {
   ## Message
-  message(cat(crayon::cyan("Generating clean science targets for", academicYear)))
+  message(cat(crayon::cyan("Generating clean targets for", academicYear)))
 
   ## Import data
-  df_attainment <- hhs_attainment_multiple(academicYear = academicYear)
-  df_student_details <- hhs_student_details_general(academicYear = academicYear)
+  df_class_list <- hhs_class_list_teacher(academicYear = academicYear)
 
-  message(cat(crayon::silver("Subset data")))
+  if (is.null(subject)) {
+    message(cat(crayon::silver("Subject not specified.  Return all.")))
+    df <- df_class_list %>%
+      dplyr::select(c(-Target, Target))
+  } else if (subject == "Combined Science 9-1") {
+    message(cat(crayon::silver("Subset data for", tolower(subject))))
+    message(cat(crayon::silver("Transforming double-grade separator")))
+    df <- df_class_list %>%
+      dplyr::filter(Subject == subject) %>%
+      tidyr::separate(col = Target, into = c("Combined.Science.1", "Combined.Science.2"), sep = "/") %>%
+      dplyr::mutate_at(.vars = c("Combined.Science.1",
+                                 "Combined.Science.2"), list(as.integer))
 
-  ## Filter data
-  # for target
-  df_target <- df_attainment %>%
-    dplyr::filter(Grade.Type == "Target")
-  # for science
-  df_target_sci <- df_target %>%
-    dplyr::filter(Subject %in% c("Science", "Combined Science 9-1", "Biology", "Chemistry", "Physics"))
-
-  ## Rename triple science classes
-  df_target_sci <- df_target_sci %>%
-    dplyr::mutate(Class = ifelse(grepl(pattern = "Yr10X/Bi|Yr10X/Ch|Yr10X/Ph", x = Class, ignore.case = TRUE), "Yr10ab/TrX",
-                                 ifelse(grepl(pattern = "Yr10Y/Bi|Yr10Y/Ch|Yr10Y/Ph", x = Class, ignore.case = TRUE), "Yr10ab/TrY",
-                                        ifelse(grepl(pattern = "Yr10Z/Bi|Yr10Z/Ch|Yr10Z/Ph", x = Class, ignore.case = TRUE), "Yr10ab/TrZ", Class))))
-
-  df_target_sci <- df_target_sci %>%
-    dplyr::mutate(Class = ifelse(grepl(pattern = "Yr11X/Bi|Yr11X/Ch|Yr11X/Ph", x = Class, ignore.case = TRUE), "Yr11ab/TrX",
-                                 ifelse(grepl(pattern = "Yr11Y/Bi|Yr11Y/Ch|Yr11Y/Ph", x = Class, ignore.case = TRUE), "Yr11ab/TrY",
-                                        ifelse(grepl(pattern = "Yr11Z/Bi|Yr11Z/Ch|Yr11Z/Ph", x = Class, ignore.case = TRUE), "Yr11ab/TrZ", Class))))
-
-  message(cat(crayon::silver("Reshape dataset")))
-
-  ## Pivot wide
-  df_target_sci_wide <- df_target_sci %>%
-    dplyr::select(-c(Staff.Code, Grade.Type)) %>%
-    dplyr::distinct() %>%
-    tidyr::pivot_wider(names_from = Subject, values_from = Grade, values_fill = NA) %>%
-    data.frame(check.names = TRUE)
-
-  ## Convert combined science
-  df_target_sci_wide <- df_target_sci_wide %>%
-    tidyr::separate(col = Combined.Science.9.1, into = c("Combined.Science.1", "Combined.Science.2"), sep = "/") %>%
-    dplyr::mutate_at(.vars = c("Combined.Science.1",
-                               "Combined.Science.2"), list(as.integer))
-
-  df_target_sci_wide <- df_target_sci_wide %>%
-    dplyr::mutate(Combined.Science = (Combined.Science.1 + Combined.Science.2) / 2) %>%
-    dplyr::select(-c(Combined.Science.1, Combined.Science.2)) %>%
-    dplyr::mutate_at(.vars = c("Combined.Science"), list(as.character))
-
-  # df_target_sci_wide <- df_target_sci_wide %>%
-  #   mutate(Science = ifelse(is.na(Science), paste0(Combined.Science), Science)) %>%
-  #   mutate(Science = ifelse(Science == "NA", NA, Science)) %>%
-  #   select(-c(Combined.Science))
-
-  message(cat(crayon::silver("Merge datasets")))
-
-  ## Retain PP and HML data from student details and merge
-  df_target_sci_wide <- df_target_sci_wide %>%
-    dplyr::select(c(UPN, Class, Science:Combined.Science))
-
-  df <- dplyr::left_join(df_student_details, df_target_sci_wide, by = c("UPN"))
+    df <- df %>%
+      dplyr::mutate(Target = (Combined.Science.1 + Combined.Science.2) / 2) %>%
+      dplyr::select(-c(Combined.Science.1, Combined.Science.2)) %>%
+      dplyr::mutate_at(.vars = c("Target"), list(as.character))
+  } else {
+    message(cat(crayon::silver("Subset data for", tolower(subject))))
+    df <- df_class_list %>%
+      dplyr::filter(Subject == subject) %>%
+      dplyr::select(c(-Target, Target))
+  }
 
   message(cat(crayon::silver("Compute metadata")))
 
@@ -312,25 +281,13 @@ hhs_targets_science <- function(academicYear, layout = "wide") {
 
   ## Final selection
   df <- df %>%
-    dplyr::select(c(Ac.Year, Year.Group, Class, UPN, GFSID, Surname.Forename.Reg,
-                    Gender, Reg, Ethnicity, PP, WBr.PP, HML.Band, SEN, SEN.Notes,
-                    Science, Combined.Science, Biology, Chemistry, Physics))
+    dplyr::select(c(Staff.Code, Ac.Year, Year.Group, Subject, Class, UPN, GFSID,
+                    Surname.Forename.Reg, Gender, Reg, Ethnicity, PP, WBr.PP,
+                    HML.Band, SEN, SEN.Notes, Target))
   df <- dplyr::distinct(df)
   df$Year.Group <- factor(df$Year.Group, levels = c("7", "8", "9", "10", "11"))
   df <- df %>% dplyr::arrange(Year.Group, Class, Surname.Forename.Reg)
   df <- df %>% dplyr::mutate_at(.vars = c("Year.Group"), list(as.character))
-
-  message(cat(crayon::silver("Reshaping dataset")))
-
-  if (layout == "long") {
-    message(cat(crayon::silver("Returning long-form")))
-    message(cat(crayon::red("Warning: dropped students with missing targets")))
-    df <- df %>%
-      tidyr::pivot_longer(cols = c(Science:Physics), names_to = "Subject", values_to = "Target", values_drop_na = TRUE)
-  } else {
-    message(cat(crayon::silver("Returning wide-form")))
-    df <- df
-  }
 
   ## Return
   return(df)
