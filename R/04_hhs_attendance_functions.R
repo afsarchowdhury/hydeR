@@ -22,11 +22,15 @@ hhs_attendance_student_session <- function(academicYear, goDate, session = NULL)
   df_students <- g4sr::gfs_student_details(academicYear)
   df_students_details <- g4sr::gfs_student_edu_details(academicYear)
 
+  df_attendance_codes_02 <- tidyr::unnest(df_attendance_codes, cols = c(aliases))
+  df_attendance_codes_02 <- dplyr::select(df_attendance_codes_02, c(alias_id, alias_code, alias_label))
+
   message(cat(crayon::silver("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_students, df_attendance_student_session_marks, by = c("id" = "student_id"))
   df <- dplyr::left_join(df, df_attendance_codes, by = c("session_mark_id" = "id"))
+  df <- dplyr::left_join(df, df_attendance_codes_02, by = c("session_alias_id" = "alias_id"))
   df <- dplyr::left_join(df, df_students_details, by = c("id" = "student_id"))
 
   message(cat(crayon::silver("Compute metadata")))
@@ -41,7 +45,9 @@ hhs_attendance_student_session <- function(academicYear, goDate, session = NULL)
   df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
-                            "Date" = date, "Session" = session, "Session.Mark" = code, "Session.Label" = label,
+                            "Date" = date, "Session" = session,
+                            "Session.Mark" = code, "Session.Label" = label,
+                            "Session.Mark.Alias" = alias_code, "Session.Label.Alias" = alias_label,
                             "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes))
   df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
@@ -82,11 +88,15 @@ hhs_attendance_student_lesson <- function(academicYear, goDate) {
   df_timetables <- g4sr::gfs_timetables(academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear)
 
+  df_attendance_codes_02 <- tidyr::unnest(df_attendance_codes, cols = c(aliases))
+  df_attendance_codes_02 <- dplyr::select(df_attendance_codes_02, c(alias_id, alias_code, alias_label))
+
   message(cat(crayon::silver("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_students, df_attendance_student_lesson_marks, by = c("id" = "student_id"))
   df <- dplyr::left_join(df, df_attendance_codes, by = c("lesson_mark_id" = "id"))
+  df <- dplyr::left_join(df, df_attendance_codes_02, by = c("lesson_alias_id" = "alias_id"))
   df <- dplyr::left_join(df, df_students_details, by = c("id" = "student_id"))
   df_02 <- tidyr::unnest(df_classes, cols = teacher_ids)
   df_02 <- dplyr::left_join(df_02, df_timetables, by = c("period_id" = "id...2"))
@@ -107,8 +117,9 @@ hhs_attendance_student_lesson <- function(academicYear, goDate) {
                             "UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
                             "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
                             "Year.Group" = year_group, "Reg" = registration_group,
-                            "Date" = date, "Subject" = subject_code, "Class" = group_code, "Lesson.Mark" = code.x,
-                            "Lesson.Label" = label,
+                            "Date" = date, "Subject" = subject_code, "Class" = group_code,
+                            "Lesson.Mark" = code.x, "Lesson.Label" = label,
+                            "Lesson.Mark.Alias" = alias_code, "Lesson.Label.Alias" = alias_label,
                             "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes))
   df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
@@ -196,11 +207,15 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
   df_students <- g4sr::gfs_student_details(academicYear)
   df_students_details <- g4sr::gfs_student_edu_details(academicYear)
 
+  df_attendance_codes_02 <- tidyr::unnest(df_attendance_codes, cols = c(aliases))
+  df_attendance_codes_02 <- dplyr::select(df_attendance_codes_02, c(alias_id, alias_code, alias_label))
+
   message(cat(crayon::silver("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_students, df_attendance_student_session_marks, by = c("id" = "student_id"))
   df <- dplyr::left_join(df, df_attendance_codes, by = c("session_mark_id" = "id"))
+  df <- dplyr::left_join(df, df_attendance_codes_02, by = c("session_alias_id" = "alias_id"))
   df <- dplyr::left_join(df, df_students_details, by = c("id" = "student_id"))
 
   message(cat(crayon::silver("Compute metadata")))
@@ -215,7 +230,9 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
   df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
-                            "Date" = date, "Session" = session, "Session.Mark" = code, "Session.Label" = label,
+                            "Date" = date, "Session" = session,
+                            "Session.Mark" = code, "Session.Label" = label,
+                            "Session.Mark.Alias" = alias_code, "Session.Label.Alias" = alias_label,
                             "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes))
   df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
@@ -264,11 +281,15 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
   df_timetables <- g4sr::gfs_timetables(academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear)
 
+  df_attendance_codes_02 <- tidyr::unnest(df_attendance_codes, cols = c(aliases))
+  df_attendance_codes_02 <- dplyr::select(df_attendance_codes_02, c(alias_id, alias_code, alias_label))
+
   message(cat(crayon::silver("Merge datasets")))
 
   ## Merge
   df <- dplyr::left_join(df_students, df_attendance_student_lesson_marks, by = c("id" = "student_id"))
   df <- dplyr::left_join(df, df_attendance_codes, by = c("lesson_mark_id" = "id"))
+  df <- dplyr::left_join(df, df_attendance_codes_02, by = c("lesson_alias_id" = "alias_id"))
   df <- dplyr::left_join(df, df_students_details, by = c("id" = "student_id"))
   df_02 <- tidyr::unnest(df_classes, cols = teacher_ids)
   df_02 <- dplyr::left_join(df_02, df_timetables, by = c("period_id" = "id...2"))
@@ -289,8 +310,9 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
                             "UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
                             "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
                             "Year.Group" = year_group, "Reg" = registration_group,
-                            "Date" = date, "Subject" = subject_code, "Class" = group_code, "Lesson.Mark" = code.x,
-                            "Lesson.Label" = label,
+                            "Date" = date, "Subject" = subject_code, "Class" = group_code,
+                            "Lesson.Mark" = code.x, "Lesson.Label" = label,
+                            "Lesson.Mark.Alias" = alias_code, "Lesson.Label.Alias" = alias_label,
                             "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes))
   df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
