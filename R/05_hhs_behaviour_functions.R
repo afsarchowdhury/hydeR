@@ -186,9 +186,7 @@ hhs_detentions <- function(academicYear, goDateStart, goDateEnd) {
   my_school_years_current <- my_school$current_academic_year
 
   ## Import behaviour data
-  df_behaviour <- hhs_behaviour_events_range(academicYear = academicYear,
-                                             goDateStart = goDateStart,
-                                             goDateEnd = goDateEnd)
+  df_behaviour <- hhs_behaviour_events_range(academicYear, goDateStart, goDateEnd)
 
   message(cat(crayon::silver("Clean data")))
 
