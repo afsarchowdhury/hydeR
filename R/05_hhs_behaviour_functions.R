@@ -204,7 +204,7 @@ hhs_detentions <- function(academicYear, goDateStart, goDateEnd) {
   message(cat(crayon::silver("Generate plot")))
 
   ## Plot
-  p <- df_detentions %>%
+  p1 <- df_detentions %>%
     dplyr::group_by(Year.Group, Date) %>%
     dplyr::summarise(n = dplyr::n()) %>%
     dplyr::ungroup() %>%
@@ -234,6 +234,31 @@ hhs_detentions <- function(academicYear, goDateStart, goDateEnd) {
       #axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1/3)
     )
 
+  p2 <- df_detentions %>%
+    dplyr::group_by(Year.Group, Date) %>%
+    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::ungroup() %>%
+    dplyr::arrange(Date) %>%
+    dplyr::group_by(Year.Group) %>%
+    dplyr::mutate(Cum.Sum = cumsum(n)) %>%
+    dplyr::ungroup() %>%
+    ggplot2::ggplot(ggplot2::aes(x = Date, y = Cum.Sum, group = Year.Group)) +
+    ggplot2::geom_step(lwd = 1) +
+    ggplot2::geom_point(ggplot2::aes(colour = Year.Group), size = 4) +
+    ggplot2::scale_x_date(
+      expand = c(0, 0.5),
+      labels = scales::label_date_short(format = c("%Y", "%b", "%d"))
+    ) +
+    ggplot2::labs(x = NULL, y = "Count of detentions",
+                  title = "School detentions",
+                  subtitle = paste0("Cumulative count of detentions vs. time.",
+                                    "\n", goDateStart, " to ", goDateEnd, "."),
+                  caption = paste0(my_school_name, " | Data retrieved using R package g4sr on ", Sys.Date())) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      legend.position = "bottom"
+    )
+
   ## Return
-  return(list(plot = p, data = df_detentions))
+  return(list(plot_1 = p1, plot_2 = p2, data = df_detentions))
 }
