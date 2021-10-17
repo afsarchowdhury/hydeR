@@ -161,3 +161,81 @@ hhs_exclusions <- function(academicYear, goDateStart, goDateEnd) {
   ## Return
   return(list(plot = p, data = df))
 }
+
+
+## Clean school detention data
+#' Get clean school detention data.
+#'
+#' Returns clean school detention data for chosen academic year and date range,
+#' along with a line plot.
+#' @importFrom magrittr "%>%"
+#' @param academicYear academic year as integer.
+#' @param goDateStart start date of range as string in the form yyyy-mm-dd.
+#' @param goDateEnd end date of range as string in the form yyyy-mm-dd.
+#' @examples
+#' hhs_detentions(2022, "2021-09-01", "2021-09-30")
+#' @export
+hhs_detentions <- function(academicYear, goDateStart, goDateEnd) {
+  ## Message
+  message(cat(crayon::cyan("Generating clean detention data for", goDateStart, "to", goDateEnd)))
+
+  ## Import school information
+  my_school <- g4sr::gfs_school()
+  my_school_name <- my_school$name
+  my_school_years <- my_school$academic_years
+  my_school_years_current <- my_school$current_academic_year
+
+  ## Import behaviour data
+  df_behaviour <- hhs_behaviour_events_range(academicYear = academicYear,
+                                             goDateStart = goDateStart,
+                                             goDateEnd = goDateEnd)
+
+  message(cat(crayon::silver("Clean data")))
+
+  ## Filter detentions
+  df_detentions <- df_behaviour %>%
+    dplyr::filter(grepl(pattern = "detention", x = Event.Classification, ignore.case = TRUE))
+
+  ## Clean
+  df_detentions$Year.Group <- factor(df_detentions$Year.Group,
+                                     levels = c("7", "8", "9", "10", "11"))
+
+  df_detentions <- df_detentions %>%
+    dplyr::mutate(Date = lubridate::as_date(Date))
+
+  message(cat(crayon::silver("Generate plot")))
+
+  ## Plot
+  p <- df_detentions %>%
+    dplyr::group_by(Year.Group, Date) %>%
+    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::ungroup() %>%
+    dplyr::arrange(Date) %>%
+    dplyr::group_by(Year.Group) %>%
+    dplyr::mutate(Cum.Sum = cumsum(n)) %>%
+    dplyr::ungroup() %>%
+    ggplot2::ggplot(ggplot2::aes(x = Date, y = Cum.Sum)) +
+    ggplot2::geom_step(lwd = 1) +
+    ggplot2::geom_point(ggplot2::aes(colour = Year.Group), size = 4) +
+    #geom_point(col = "olivedrab3", size = 4) +
+    #scale_y_continuous(breaks = seq(0, 100, 2)) +
+    ggplot2::scale_x_date(
+      expand = c(0, 0.5),
+      labels = scales::label_date_short(format = c("%Y", "%b", "%d"))#,
+      #breaks = scales::breaks_width("2 days")
+    ) +
+    ggplot2::labs(x = NULL, y = "Count of detentions",
+                  title = "School detentions",
+                  subtitle = paste0("Cumulative count of detentions vs. time, faceted by year group.",
+                                    "\n", goDateStart, " to ", goDateEnd, "."),
+                  caption = paste0(my_school_name, " | Data retrieved using R package g4sr on ", Sys.Date())) +
+    ggplot2::facet_wrap(~Year.Group, nrow = 1) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      legend.position = "none"#,
+      #axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1/3)
+    )
+
+  ## Return
+  return(list(plot = p, data = df_detentions))
+}
