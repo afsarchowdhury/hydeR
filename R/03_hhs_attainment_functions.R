@@ -232,14 +232,14 @@ hhs_attainment_multiple <- function(academicYear, yearGroupFrom = "7", yearGroup
 #' @param academicYear academic year as integer.
 #' @param subject subject as string.  .  Defaults to null.
 #' @examples
-#' hhs_targets(2022, subject = "Combined Science 9-1")
+#' hhs_targets(2022, "Combined Science 9-1")
 #' @export
 hhs_targets <- function(academicYear, subject = NULL) {
   ## Message
   message(cat(crayon::cyan("Generating clean targets for", academicYear)))
 
   ## Import data
-  df_class_list <- hhs_class_list_teacher(academicYear = academicYear)
+  df_class_list <- hhs_class_list_teacher(academicYear)
 
   if (is.null(subject)) {
     message(cat(crayon::silver("Subject not specified.  Return all.")))
@@ -288,6 +288,58 @@ hhs_targets <- function(academicYear, subject = NULL) {
   df$Year.Group <- factor(df$Year.Group, levels = c("7", "8", "9", "10", "11"))
   df <- df %>% dplyr::arrange(Year.Group, Class, Surname.Forename.Reg)
   df <- df %>% dplyr::mutate_at(.vars = c("Year.Group"), list(as.character))
+
+  ## Return
+  return(df)
+}
+
+## Clean markbook attainment
+#' Get clean markbook attainment.
+#'
+#' Returns clean details of attainment in the chosen academic year for all
+#' markbooks.
+#' @importFrom magrittr "%>%"
+#' @param academicYear academic year as integer.
+#' @examples
+#' hhs_markbook_attainment(2022)
+#' @export
+hhs_markbook_attainment <- function(academicYear) {
+  ## Message
+  message(cat(crayon::cyan("Generating clean markbook attainment for", academicYear)))
+
+  ## Import data
+  df_class_list <- hhs_class_list_teacher(academicYear)
+  df_teaching_groups <- g4sr::gfs_teaching_groups(academicYear)
+  df_mb <- g4sr::gfs_assessment_markbooks(academicYear)
+  df_marks <- g4sr::gfs_assessment_marks(academicYear)
+
+  message(cat(crayon::silver("Clean data")))
+
+  ## Clean data
+  df_class_list_02 <- df_class_list %>%
+    dplyr::mutate_all(as.character) %>%
+    dplyr::distinct()
+
+  df_teaching_groups_02 <- df_teaching_groups %>%
+    dplyr::select(c("Class" = name, subject_id)) %>%
+    dplyr::mutate_all(as.character) %>%
+    dplyr::distinct()
+
+  df_mb_02 <- df_mb %>% dplyr::mutate_all(as.character)
+  df_marks_02 <- df_marks %>% dplyr::mutate_all(as.character)
+
+  message(cat(crayon::silver("Merge datasets")))
+
+  ## Merge
+  df <- dplyr::left_join(df_marks_02, df_mb_02, by = c("id" = "id...4"))
+  df <- dplyr::left_join(df, df_teaching_groups_02, by = c("id...1" = "subject_id"))
+
+  df <- df %>%
+    dplyr::select(c("GFSID" = student_id, Class, "Markbook" = name...3,
+                    "Strand" = name...5, "Mark" = mark, "Grade" = grade)) %>%
+    dplyr::distinct()
+
+  df <- dplyr::left_join(df_class_list_02, df, by = c("Class", "GFSID"))
 
   ## Return
   return(df)

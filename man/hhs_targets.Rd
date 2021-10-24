@@ -16,5 +16,5 @@ Returns clean details of targets in the chosen academic year and subject for all
 year groups.
 }
 \examples{
-hhs_targets(2022, subject = "Combined Science 9-1")
+hhs_targets(2022, "Combined Science 9-1")
 }
