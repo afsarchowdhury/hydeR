@@ -2,7 +2,7 @@
 % Please edit documentation in R/01_hhs_setup_functions.R
 \name{hhs_setup}
 \alias{hhs_setup}
-\title{Run set up for gfs functions.}
+\title{Run set up for hhs functions.}
 \usage{
 hhs_setup(api_key = NULL)
 }

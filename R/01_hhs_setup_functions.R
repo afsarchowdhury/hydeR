@@ -2,7 +2,7 @@
 #https://www.go4schools.com/Documentation/V1/APIDocumentation.html
 
 # Set up ---------------------------
-#' Run set up for gfs functions.
+#' Run set up for hhs functions.
 #'
 #' Use this function to store your API key for use with hhs functions.
 #' Authentication is required for all requests.  See your school's
