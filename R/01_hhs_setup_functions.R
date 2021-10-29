@@ -11,8 +11,8 @@
 #' @examples
 #' hhs_setup("a96650481f0245eea396726f85ac7049")
 #' @export
-hhs_setup <- function(api_key = NULL) {
-  if (is.null(api_key)) {
+hhs_setup <- function(api_key) {
+  if (missing(api_key)) {
     g4sr::gfs_setup()
   } else {
     g4sr::gfs_setup(api_key = api_key)

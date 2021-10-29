@@ -4,7 +4,7 @@
 \alias{hhs_setup}
 \title{Run set up for hhs functions.}
 \usage{
-hhs_setup(api_key = NULL)
+hhs_setup(api_key)
 }
 \arguments{
 \item{api_key}{API key as string.}
