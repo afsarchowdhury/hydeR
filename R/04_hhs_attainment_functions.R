@@ -70,6 +70,7 @@ hhs_exam_results <- function(academicYear, yearGroup, type = NULL) {
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$student_id, ")")
   df$Grade.Type <- paste0("External examination")
 
   message(cat(crayon::silver("Clean final output")))
@@ -77,7 +78,7 @@ hhs_exam_results <- function(academicYear, yearGroup, type = NULL) {
   ## Tidy
   df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group, "Qualification.Title" = qualification_title.x,
                             "Subject" = name, Class, "UPN" = upn, "GFSID" = student_id, Surname.Forename.Reg,
-                            "Surname" = preferred_last_name, "Forename" = preferred_first_name,
+                            Surname.Forename.ID, "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Reg" = registration_group, "Gender" = sex, PP, HML.Band, Grade.Type, "Grade" = grade))
   df <- dplyr::distinct(df)
 
@@ -143,12 +144,13 @@ hhs_attainment <- function(academicYear, yearGroup) {
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$grades.student_id, ")")
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group, "Subject" = name.y, Class,
-                            "UPN" = upn, "GFSID" = grades.student_id, Surname.Forename.Reg,
+                            "UPN" = upn, "GFSID" = grades.student_id, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Reg" = registration_group, "Gender" = sex, "Grade.Type" = name.x, "Grade" = grades.name))
   df <- dplyr::distinct(df)
@@ -209,12 +211,13 @@ hhs_attainment_multiple <- function(academicYear, yearGroupFrom = "7", yearGroup
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$grades.student_id, ")")
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group, "Subject" = name.y, Class,
-                            "UPN" = upn, "GFSID" = grades.student_id, Surname.Forename.Reg,
+                            "UPN" = upn, "GFSID" = grades.student_id, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Reg" = registration_group, "Gender" = sex, "Grade.Type" = name.x, "Grade" = grades.name))
   df <- dplyr::distinct(df)
@@ -282,7 +285,7 @@ hhs_targets <- function(academicYear, subject = NULL) {
   ## Final selection
   df <- df %>%
     dplyr::select(c(Staff.Code, Ac.Year, Year.Group, Subject, Class, UPN, GFSID,
-                    Surname.Forename.Reg, Gender, Reg, Ethnicity, PP, WBr.PP,
+                    Surname.Forename.Reg, Surname.Forename.ID, Gender, Reg, Ethnicity, PP, WBr.PP,
                     HML.Band, SEN, SEN.Notes, Target))
   df <- dplyr::distinct(df)
   df$Year.Group <- factor(df$Year.Group, levels = c("7", "8", "9", "10", "11"))

@@ -57,12 +57,14 @@ hhs_student_details_general <- function(academicYear) {
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$id, ")")
   df <- dplyr::mutate(df, WBr.PP = ifelse(grepl(pattern = "english|scottish|welsh", x = Ethnicity, ignore.case = TRUE) & PP == "True", "True", "False"))
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Clean and filter
-  df <- dplyr::select(df, c("Year.Group" = national_curriculum_year, "UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
+  df <- dplyr::select(df, c("Year.Group" = national_curriculum_year, "UPN" = upn, "GFSID" = id,
+                            Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name, "Reg" = registration_group,
                             "Gender" = sex, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, Ad.No, UCI, Age.Reading, Age.Spelling,
                             SEN, SEN.Notes, Keyworker, LAC, CP.CAF, Date.Admission))
@@ -104,8 +106,10 @@ hhs_student_send_search <- function(academicYear, notesSearch) {
   message(cat(crayon::silver("Clean final output")))
 
   ## Clean and filter
-  df <- dplyr::select(df, c(Year.Group, UPN, GFSID, Surname.Forename.Reg, Gender, EAL, PP, WBr.PP, HML.Band, UCI,
-                            Age.Reading, Age.Spelling, SEN, SEN.Notes, Keyworker, LAC, CP.CAF))
+  df <- dplyr::select(df, c(Year.Group, UPN, GFSID, Surname.Forename.Reg,
+                            Surname.Forename.ID, Gender, EAL, PP, WBr.PP,
+                            HML.Band, UCI, Age.Reading, Age.Spelling, SEN,
+                            SEN.Notes, Keyworker, LAC, CP.CAF))
   df <- dplyr::arrange(df, as.numeric(Year.Group))
 
   ## Return

@@ -48,13 +48,14 @@ hhs_behaviour_events_range <- function(academicYear, goDateStart, goDateEnd) {
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$student_ids, ")")
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c("Event.ID" = id, "Staff" = display_name, "Email.Staff" = email_address,
                             "Year.Group" = national_curriculum_year, "Subject" = subject_code, Class, "Room" = room_name,
-                            "UPN" = upn, "GFSID" = student_ids, Surname.Forename.Reg,
+                            "UPN" = upn, "GFSID" = student_ids, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Reg" = registration_group, "Gender" = sex,
                             "Date" = event_date, "Timestamp" = created_timestamp, School.Week, Day.Type,
@@ -129,7 +130,7 @@ hhs_exclusions <- function(academicYear, goDateStart, goDateEnd) {
   p <- df_student_attendance_session %>%
     dplyr::filter(Session.Mark == "E") %>%
     dplyr::mutate(Date = lubridate::as_date(Date)) %>%
-    dplyr::group_by(Year.Group, Date, UPN, Surname.Forename.Reg) %>%
+    dplyr::group_by(Year.Group, Date, UPN, Surname.Forename.ID) %>%
     dplyr::summarise(n = dplyr::n()) %>%
     dplyr::ungroup() %>%
     dplyr::arrange(Date) %>%

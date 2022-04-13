@@ -83,13 +83,14 @@ hhs_class_list_teacher <- function(academicYear, staffCode = NULL, yearGroupFrom
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$student_ids, ")")
   df <- dplyr::mutate(df, WBr.PP = ifelse(grepl(pattern = "english|scottish|welsh", x = Ethnicity, ignore.case = TRUE) & PP == "True", "True", "False"))
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Clean and filter
   df <- dplyr::select(df, c("Staff.Code" = code.y, "Year.Group" = year_group, "Reg" = registration_group, "Subject" = name.y,
-                            "Class" = name.x, "UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg,
+                            "Class" = name.x, "UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x,
                             "Gender" = sex, LAC, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, Target,
                             SEN, SEN.Notes, Keyworker, CP.CAF))
@@ -177,13 +178,14 @@ hhs_class_list_student <- function(academicYear, student) {
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$student_ids, ")")
   df <- dplyr::mutate(df, WBr.PP = ifelse(grepl(pattern = "english|scottish|welsh", x = Ethnicity, ignore.case = TRUE) & PP == "True", "True", "False"))
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Clean
-  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, "Surname" = preferred_last_name.x,
-                            "Forename" = preferred_first_name.x, "Gender" = sex,
+  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, Surname.Forename.ID,
+                            "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
                             LAC, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, SEN, SEN.Notes, Keyworker, CP.CAF,
                             "Year.Group" = year_group, "Reg" = registration_group, "Subject" = name.y, "Class" = name.x,
                             "Staff.Code" = code.y))

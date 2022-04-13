@@ -38,11 +38,12 @@ hhs_attendance_student_session <- function(academicYear, goDate, session = NULL)
   ## Create
   df <- dplyr::filter(df, !is.na(date))
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$id, ")")
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
+  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
                             "Date" = date, "Session" = session,
@@ -108,13 +109,14 @@ hhs_attendance_student_lesson <- function(academicYear, goDate) {
   ## Create
   df <- dplyr::filter(df, !is.na(date))
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$id, ")")
   df$Teacher = paste0(df$title, " ", df$preferred_last_name.y)
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c("Lesson.ID" = name, "Lesson" = display_name, Teacher, "Room" = rooms,
-                            "UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
+                            "UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
                             "Year.Group" = year_group, "Reg" = registration_group,
                             "Date" = date, "Subject" = subject_code, "Class" = group_code,
@@ -160,11 +162,12 @@ hhs_attendance_student_summary <- function(academicYear) {
 
   ## Create
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$id, ")")
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
+  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name, "Gender" = sex,
                             "Year.Group" = national_curriculum_year, "Reg" = registration_group,
                             "Possible.Session" = possible_sessions, "Present" = present, "Approved.EA" = approved_educational_activity,
@@ -223,11 +226,12 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
   ## Create
   df <- dplyr::filter(df, !is.na(date))
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$id, ")")
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
+  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
                             "Date" = date, "Session" = session,
@@ -301,13 +305,14 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
   ## Create
   df <- dplyr::filter(df, !is.na(date))
   df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$registration_group, ")")
+  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name.x), " ", df$preferred_first_name.x, " (", df$id, ")")
   df$Teacher = paste0(df$title, " ", df$preferred_last_name.y)
 
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
   df <- dplyr::select(df, c("Lesson.ID" = name, "Lesson" = display_name, Teacher, "Room" = rooms,
-                            "UPN" = upn, "GFSID" = id, Surname.Forename.Reg,
+                            "UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
                             "Year.Group" = year_group, "Reg" = registration_group,
                             "Date" = date, "Subject" = subject_code, "Class" = group_code,
