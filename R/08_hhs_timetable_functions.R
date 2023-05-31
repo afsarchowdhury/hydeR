@@ -37,21 +37,25 @@ hhs_timetable <- function(academicYear) {
   df_calendar_02$Day <- lubridate::wday(df_calendar_02$Date, label = TRUE, abbr = FALSE)
   df_calendar_02 <- dplyr::arrange(df_calendar_02, Date)
   df_calendar_02 <- dplyr::select(df_calendar_02, -c(timetable_id, day_type_code))
+
   # Clean classes
   df_classes_02 <- dplyr::rename(df_classes, c("Year.Group" = year_group, "Subject.Code" = subject_code,
                                                "Class" = group_code, "Room" = rooms))
   df_classes_02 <- dplyr::filter(df_classes_02, !Room %in% c("character(0)", "NULL"))
   df_classes_02 <- tidyr::unnest(df_classes_02, cols = "Room")
+
   # Clean student classes
   df_student_classes_02 <- dplyr::rename(df_student_classes, c("student_start" = start, "student_end" = end))
   df_student_classes_02$student_start <- lubridate::as_date(df_student_classes_02$student_start)
   df_student_classes_02$student_end <- lubridate::as_date(df_student_classes_02$student_end)
+
   # Clean teaching
   df_teaching_teachers_02 <- dplyr::select(df_teaching_teachers, c(id, "Staff.Code" = code))
   df_teaching_groups_02 <- dplyr::select(df_teaching_groups, c("groups_id" = id, "Class" = name, subject_id))
   df_teaching_subject_02 <- dplyr::select(df_teaching_subject, c(id, "Subject.Name" = name, "Subject.Code" = code,
                                                                  "Year.Group" = year_group, department_id))
   df_teaching_department_02 <- dplyr::rename(df_teaching_department, "Department" = name)
+
   # Clean student
   df_student_clean_02 <- dplyr::select(df_student_clean, c(UPN:HML.Band, SEN))
   df_student_clean_02$GFSID <- as.integer(df_student_clean_02$GFSID)
@@ -78,12 +82,16 @@ hhs_timetable <- function(academicYear) {
   df <- dplyr::filter(df, !is.na(Lesson.ID))
   df <- dplyr::distinct(df)
   df <- dplyr::mutate(df, Week.Colour = ifelse(Week == 1, "Red", ifelse(Week == 2, "Blue", NA)))
+
   # Factor days
   df$Day <- factor(df$Day, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"))
+
   # Factor week colour
   df$Week.Colour <- factor(df$Week.Colour, levels = c("Red", "Blue"))
+
   # Factor year groups
   df$Year.Group <- factor(df$Year.Group, levels = c(as.character(seq(7, 11, 1))))
+
   # Create lesson codes for factoring
   df_lesson_code <- data.frame(
     Week.Colour = c(rep("R", 25), rep("B", 25)),
@@ -98,7 +106,9 @@ hhs_timetable <- function(academicYear) {
   df <- dplyr::select(df, c(Staff.Code, Week.Colour, Day, Lesson.ID, Period, Room,
                             Department, Subject.Name, Subject.Code,
                             Year.Group, Class, "Lesson.Start" = start, "Lesson.End" = end,
-                            UPN:SEN))
+                            UPN, "GFSID" = student_id, Surname.Forename.Reg:SEN))
+
+  df$GFSID <- as.character(df$GFSID)
 
   df <- dplyr::distinct(df)
 
@@ -110,6 +120,7 @@ hhs_timetable <- function(academicYear) {
   df <- dplyr::rowwise(df) %>% dplyr::mutate(Room = toString(Room))
   df <- dplyr::ungroup(df)
   df <- dplyr::distinct(df)
+
   # Tidy room names
   df <- dplyr::mutate(df, Room = stringr::str_replace_all(Room, "c\\(", ""))
   df <- dplyr::mutate(df, Room = stringr::str_replace_all(Room, "\\)", ""))

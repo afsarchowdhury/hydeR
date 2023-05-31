@@ -1,7 +1,7 @@
 Package: hydeR
 Type: Package
 Title: R functions for Hyde High School
-Version: 0.7.2
+Version: 0.7.3
 Authors@R: person("Afsar", "Chowdhury", email = "a.chowdhury@hydehighschool.uk",
                   role = c("aut", "cre"))
 Maintainer: Afsar Chowdhury <a.chowdhury@hydehighschool.uk>
@@ -32,7 +32,7 @@ Imports:
     tidyr
 Remotes:
     afsarchowdhury/g4sr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
 Suggests: 
     testthat,
