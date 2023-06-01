@@ -16,6 +16,7 @@ hhs_readability <- function(text_dir, return_full = FALSE) {
   if (dir.exists(text_dir) == FALSE) {
     stop(call. = FALSE, "Directory does not exist")
   } else{
+
     ## Create corpus
     message(cat(crayon::silver("Create corpus")))
 

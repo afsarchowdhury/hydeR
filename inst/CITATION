@@ -1,0 +1,14 @@
+citHeader("To cite hydeR in publications use:")
+
+citEntry(
+  entry    = "manual",
+  title    = "hydeR",
+  author   = "Afsar Chowdhury",
+  year     = "2021",
+  url      = "https://github.com/afsarchowdhury/hydeR",
+  textVersion = paste("Chowdhury, A. (2021).",
+        "hydeR: R functions for Hyde High School.",
+        "version 0.7.4. Hyde High School. Tameside, Greater Manchester.",
+        "https://github.com/afsarchowdhury/hydeR"
+  )
+)
