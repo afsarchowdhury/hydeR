@@ -30,6 +30,7 @@ hhs_timetable <- function(academicYear) {
   df_timetable_02 <- dplyr::select(df_timetable, -c(id...1))
   df_timetable_02 <- dplyr::rename(df_timetable_02, c("Day" = day_of_week, "Lesson.ID" = name,
                                                       "Period" = display_name, "Week" = week))
+
   # Clean calendar
   df_calendar_02 <- dplyr::rename(df_calendar, c("Week" = week, "Date" = date))
   df_calendar_02 <- dplyr::filter(df_calendar_02, day_type_code == "OPEN")

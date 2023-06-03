@@ -12,7 +12,7 @@
 #' hhs_behaviour_events_range(2021, "2021-07-12", "2021-07-16")
 #' @export
 hhs_behaviour_events_range <- function(academicYear, goDateStart, goDateEnd) {
-  ## Mesaage
+  ## Message
   message(cat(crayon::cyan("Generating clean behaviour events for", goDateStart, "to", goDateEnd)))
 
   ## Import data
@@ -90,7 +90,7 @@ hhs_behaviour_events_range <- function(academicYear, goDateStart, goDateEnd) {
 #' hhs_exclusions(2022, "2021-09-01", "2021-09-30")
 #' @export
 hhs_exclusions <- function(academicYear, goDateStart, goDateEnd) {
-  ## Mesaage
+  ## Message
   message(cat(crayon::cyan("Generating clean exclusion data for", goDateStart, "to", goDateEnd)))
 
   ## Import school information

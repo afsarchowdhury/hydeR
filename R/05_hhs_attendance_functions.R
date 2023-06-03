@@ -202,9 +202,13 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
   # Create date range sequence
   goDate <- seq(as.Date(goDateStart), as.Date(goDateEnd), 1)
   # Iterate over date range
-  df_attendance_student_session_marks <- lapply(1:length(goDate),
-                                                function(i) g4sr::gfs_attendance_student_session_marks(academicYear = academicYear,
-                                                                                                       goDate = goDate[i]))
+  df_attendance_student_session_marks <- lapply(
+    1:length(goDate),
+    function(i) g4sr::gfs_attendance_student_session_marks(
+      academicYear = academicYear,
+      goDate = goDate[i]
+    )
+  )
   # Bind list
   df_attendance_student_session_marks <- data.table::rbindlist(df_attendance_student_session_marks)
   df_students <- g4sr::gfs_student_details(academicYear)
@@ -274,9 +278,13 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
   # Create date range sequence
   goDate <- seq(as.Date(goDateStart), as.Date(goDateEnd), 1)
   # Iterate over date range
-  df_attendance_student_lesson_marks <- lapply(1:length(goDate),
-                                               function(i) g4sr::gfs_attendance_student_lesson_marks(academicYear = academicYear,
-                                                                                                     goDate = goDate[i]))
+  df_attendance_student_lesson_marks <- lapply(
+    1:length(goDate),
+    function(i) g4sr::gfs_attendance_student_lesson_marks(
+      academicYear = academicYear,
+      goDate = goDate[i]
+    )
+  )
   # Bind list
   df_attendance_student_lesson_marks <- data.table::rbindlist(df_attendance_student_lesson_marks)
   df_students <- g4sr::gfs_student_details(academicYear)
