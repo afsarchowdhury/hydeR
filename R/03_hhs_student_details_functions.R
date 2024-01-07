@@ -27,20 +27,23 @@ hhs_student_details_general <- function(academicYear) {
                                                 x = name, ignore.case = TRUE))
   df_students_general_02 <- tidyr::pivot_wider(df_students_general_02, names_from = name, values_from = value)
   df_students_general_02 <- data.frame(df_students_general_02, check.names = TRUE)
-  df_students_general_02 <- dplyr::select(df_students_general_02,
-                                          c(student_id, "Ad.No" = Admission.number, UCI, HML.Band,
-                                            "Age.Reading" = X1..Reading.Age, "Age.Spelling" = X2..Spelling.Age,
-                                            "SEN" = X3...SEN.Code, "SEN.Notes" = X4..SEN.Notes,
-                                            "Keyworker" = X5..Keyworker.Name, CP.CAF,
-                                            "Date.Admission" = Admission.date))
+  df_students_general_02 <- dplyr::select(df_students_general_02,c(
+    student_id, "Ad.No" = Admission.number, UCI, HML.Band,
+    #"Age.Reading" = X1..Reading.Age, "Age.Spelling" = X2..Spelling.Age,
+    "SEN" = X3...SEN.Code, "SEN.Notes" = X4..SEN.Notes,
+    "Keyworker" = X5..Keyworker.Name, CP.CAF,
+    "Date.Admission" = Admission.date
+  ))
   df_students_general_02 <- dplyr::distinct(df_students_general_02)
 
   ## Tidy sensitive
   df_students_sensitive_02 <- dplyr::select(df_students_sensitive, c(student_id, name, value))
   df_students_sensitive_02 <- tidyr::pivot_wider(df_students_sensitive_02, names_from = name, values_from = value)
   df_students_sensitive_02 <- data.frame(df_students_sensitive_02, check.names = TRUE)
-  df_students_sensitive_02 <- dplyr::select(df_students_sensitive_02, c(student_id, "LAC" = Looked.after, Ethnicity, EAL, FSM,
-                                                                        "PP" = Pupil.Premium.Indicator))
+  df_students_sensitive_02 <- dplyr::select(df_students_sensitive_02, c(
+    student_id, "LAC" = Looked.after, Ethnicity, EAL, FSM, "FSM6" = FSMEver6,
+    "PP" = Pupil.Premium.Indicator
+  ))
   df_students_sensitive_02 <- dplyr::distinct(df_students_sensitive_02)
 
   ## Tidy details
@@ -63,11 +66,14 @@ hhs_student_details_general <- function(academicYear) {
   message(cat(crayon::silver("Clean final output")))
 
   ## Clean and filter
-  df <- dplyr::select(df, c("Year.Group" = national_curriculum_year, "UPN" = upn, "GFSID" = id,
-                            Surname.Forename.Reg, Surname.Forename.ID,
-                            "Surname" = preferred_last_name, "Forename" = preferred_first_name, "Reg" = registration_group,
-                            "Gender" = sex, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, Ad.No, UCI, Age.Reading, Age.Spelling,
-                            SEN, SEN.Notes, Keyworker, LAC, CP.CAF, Date.Admission))
+  df <- dplyr::select(df, c(
+    "Year.Group" = national_curriculum_year, "UPN" = upn, "GFSID" = id,
+    Surname.Forename.Reg, Surname.Forename.ID,
+    "Surname" = preferred_last_name, "Forename" = preferred_first_name, "Reg" = registration_group,
+    "Gender" = sex, Ethnicity, EAL, FSM, FSM6, PP, WBr.PP, HML.Band, Ad.No, UCI,
+    #Age.Reading, Age.Spelling,
+    SEN, SEN.Notes, Keyworker, LAC, CP.CAF, Date.Admission
+  ))
   df <- dplyr::mutate_all(df, .funs = as.character)
   # df <- dplyr::mutate_at(df, .vars = c("Date.Admission", "Date.Leaving"), .funs = lubridate::mdy_hms)
   # df$Stay <- lubridate::as.duration(df$Date.Leaving - df$Date.Admission)
@@ -106,10 +112,13 @@ hhs_student_send_search <- function(academicYear, notesSearch) {
   message(cat(crayon::silver("Clean final output")))
 
   ## Clean and filter
-  df <- dplyr::select(df, c(Year.Group, UPN, GFSID, Surname.Forename.Reg,
-                            Surname.Forename.ID, Gender, EAL, PP, WBr.PP,
-                            HML.Band, UCI, Age.Reading, Age.Spelling, SEN,
-                            SEN.Notes, Keyworker, LAC, CP.CAF))
+  df <- dplyr::select(df, c(
+    Year.Group, UPN, GFSID, Surname.Forename.Reg,
+    Surname.Forename.ID, Gender, EAL, FSM, FSM6, PP, WBr.PP,
+    HML.Band, UCI,
+    #Age.Reading, Age.Spelling,
+    SEN, SEN.Notes, Keyworker, LAC, CP.CAF
+  ))
   df <- dplyr::arrange(df, as.numeric(Year.Group))
 
   ## Return

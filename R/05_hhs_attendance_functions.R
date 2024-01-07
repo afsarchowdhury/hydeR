@@ -43,13 +43,15 @@ hhs_attendance_student_session <- function(academicYear, goDate, session = NULL)
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
-                            "Surname" = preferred_last_name, "Forename" = preferred_first_name,
-                            "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
-                            "Date" = date, "Session" = session,
-                            "Session.Mark" = code, "Session.Label" = label,
-                            "Session.Mark.Alias" = alias_code, "Session.Label.Alias" = alias_label,
-                            "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes))
+  df <- dplyr::select(df, c(
+    "UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
+    "Surname" = preferred_last_name, "Forename" = preferred_first_name,
+    "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
+    "Date" = date, "Session" = session,
+    "Session.Mark" = code, "Session.Label" = label,
+    "Session.Mark.Alias" = alias_code, "Session.Label.Alias" = alias_label,
+    "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes
+  ))
   df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
   # Encode present code
@@ -115,14 +117,16 @@ hhs_attendance_student_lesson <- function(academicYear, goDate) {
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c("Lesson.ID" = name, "Lesson" = display_name, Teacher, "Room" = rooms,
-                            "UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
-                            "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
-                            "Year.Group" = year_group, "Reg" = registration_group,
-                            "Date" = date, "Subject" = subject_code, "Class" = group_code,
-                            "Lesson.Mark" = code.x, "Lesson.Label" = label,
-                            "Lesson.Mark.Alias" = alias_code, "Lesson.Label.Alias" = alias_label,
-                            "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes))
+  df <- dplyr::select(df, c(
+    "Lesson.ID" = name, "Lesson" = display_name, Teacher, "Room" = rooms,
+    "UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
+    "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
+    "Year.Group" = year_group, "Reg" = registration_group,
+    "Date" = date, "Subject" = subject_code, "Class" = group_code,
+    "Lesson.Mark" = code.x, "Lesson.Label" = label,
+    "Lesson.Mark.Alias" = alias_code, "Lesson.Label.Alias" = alias_label,
+    "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes
+  ))
   df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
   # Encode present code
@@ -167,12 +171,14 @@ hhs_attendance_student_summary <- function(academicYear) {
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
-                            "Surname" = preferred_last_name, "Forename" = preferred_first_name, "Gender" = sex,
-                            "Year.Group" = national_curriculum_year, "Reg" = registration_group,
-                            "Possible.Session" = possible_sessions, "Present" = present, "Approved.EA" = approved_educational_activity,
-                            "Late" = late, "Authorised.Absence" = authorised_absence, "Unauthorised.Absence" = unauthorised_absence,
-                            "Attendance.No.Required" = attendance_not_required, "Missing.Mark" = missing_mark))
+  df <- dplyr::select(df, c(
+    "UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
+    "Surname" = preferred_last_name, "Forename" = preferred_first_name, "Gender" = sex,
+    "Year.Group" = national_curriculum_year, "Reg" = registration_group,
+    "Possible.Session" = possible_sessions, "Present" = present, "Approved.EA" = approved_educational_activity,
+    "Late" = late, "Authorised.Absence" = authorised_absence, "Unauthorised.Absence" = unauthorised_absence,
+    "Attendance.No.Required" = attendance_not_required, "Missing.Mark" = missing_mark
+  ))
   df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
 
@@ -235,13 +241,15 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
-                            "Surname" = preferred_last_name, "Forename" = preferred_first_name,
-                            "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
-                            "Date" = date, "Session" = session,
-                            "Session.Mark" = code, "Session.Label" = label,
-                            "Session.Mark.Alias" = alias_code, "Session.Label.Alias" = alias_label,
-                            "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes))
+  df <- dplyr::select(df, c(
+    "UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
+    "Surname" = preferred_last_name, "Forename" = preferred_first_name,
+    "Year.Group" = national_curriculum_year, "Reg" = registration_group, "Gender" = sex,
+    "Date" = date, "Session" = session,
+    "Session.Mark" = code, "Session.Label" = label,
+    "Session.Mark.Alias" = alias_code, "Session.Label.Alias" = alias_label,
+    "Session.Late.Minutes" = session_minutes_late, "Session.Notes" = session_notes
+  ))
   df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
   # Encode present code
@@ -319,14 +327,16 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c("Lesson.ID" = name, "Lesson" = display_name, Teacher, "Room" = rooms,
-                            "UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
-                            "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
-                            "Year.Group" = year_group, "Reg" = registration_group,
-                            "Date" = date, "Subject" = subject_code, "Class" = group_code,
-                            "Lesson.Mark" = code.x, "Lesson.Label" = label,
-                            "Lesson.Mark.Alias" = alias_code, "Lesson.Label.Alias" = alias_label,
-                            "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes))
+  df <- dplyr::select(df, c(
+    "Lesson.ID" = name, "Lesson" = display_name, Teacher, "Room" = rooms,
+    "UPN" = upn, "GFSID" = id, Surname.Forename.Reg, Surname.Forename.ID,
+    "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
+    "Year.Group" = year_group, "Reg" = registration_group,
+    "Date" = date, "Subject" = subject_code, "Class" = group_code,
+    "Lesson.Mark" = code.x, "Lesson.Label" = label,
+    "Lesson.Mark.Alias" = alias_code, "Lesson.Label.Alias" = alias_label,
+    "Lesson.Late.Minutes" = lesson_minutes_late, "Lesson.Notes" = lesson_notes
+  ))
   df <- dplyr::mutate_all(df, .funs = as.character)
   df <- dplyr::distinct(df)
   # Encode present code
