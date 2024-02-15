@@ -21,15 +21,17 @@ hhs_timetable <- function(academicYear) {
   df_teaching_groups <- g4sr::gfs_teaching_groups(academicYear)
   df_teaching_subject <- g4sr::gfs_teaching_subjects(academicYear)
   df_teaching_department <- g4sr::gfs_teaching_departments(academicYear)
-  df_student_clean <- hhs_student_details_general(academicYear)
+  df_student_clean <- hydeR::hhs_student_details_general(academicYear)
 
   message(cat(crayon::silver("Clean datasets")))
 
   ## Clean datasets
   # Clean timetable
   df_timetable_02 <- dplyr::select(df_timetable, -c(id...1))
-  df_timetable_02 <- dplyr::rename(df_timetable_02, c("Day" = day_of_week, "Lesson.ID" = name,
-                                                      "Period" = display_name, "Week" = week))
+  df_timetable_02 <- dplyr::rename(df_timetable_02, c(
+    "Day" = day_of_week, "Lesson.ID" = name,
+    "Period" = display_name, "Week" = week
+  ))
 
   # Clean calendar
   df_calendar_02 <- dplyr::rename(df_calendar, c("Week" = week, "Date" = date))
@@ -40,8 +42,10 @@ hhs_timetable <- function(academicYear) {
   df_calendar_02 <- dplyr::select(df_calendar_02, -c(timetable_id, day_type_code))
 
   # Clean classes
-  df_classes_02 <- dplyr::rename(df_classes, c("Year.Group" = year_group, "Subject.Code" = subject_code,
-                                               "Class" = group_code, "Room" = rooms))
+  df_classes_02 <- dplyr::rename(df_classes, c(
+    "Year.Group" = year_group, "Subject.Code" = subject_code,
+    "Class" = group_code, "Room" = rooms
+  ))
   df_classes_02 <- dplyr::filter(df_classes_02, !Room %in% c("character(0)", "NULL"))
   df_classes_02 <- tidyr::unnest(df_classes_02, cols = "Room")
 
@@ -53,13 +57,14 @@ hhs_timetable <- function(academicYear) {
   # Clean teaching
   df_teaching_teachers_02 <- dplyr::select(df_teaching_teachers, c(id, "Staff.Code" = code))
   df_teaching_groups_02 <- dplyr::select(df_teaching_groups, c("groups_id" = id, "Class" = name, subject_id))
-  df_teaching_subject_02 <- dplyr::select(df_teaching_subject, c(id, "Subject.Name" = name, "Subject.Code" = code,
-                                                                 "Year.Group" = year_group, department_id))
+  df_teaching_subject_02 <- dplyr::select(df_teaching_subject, c(
+    id, "Subject.Name" = name, "Subject.Code" = code,
+    "Year.Group" = year_group, department_id
+  ))
   df_teaching_department_02 <- dplyr::rename(df_teaching_department, "Department" = name)
 
   # Clean student
   df_student_clean_02 <- dplyr::select(df_student_clean, c(UPN:HML.Band, SEN))
-  df_student_clean_02$GFSID <- as.integer(df_student_clean_02$GFSID)
 
   message(cat(crayon::silver("Merge datasets")))
 
@@ -109,18 +114,16 @@ hhs_timetable <- function(academicYear) {
                             Year.Group, Class, "Lesson.Start" = start, "Lesson.End" = end,
                             UPN, "GFSID" = student_id, Surname.Forename.Reg:SEN))
 
-  df$GFSID <- as.character(df$GFSID)
-
   df <- dplyr::distinct(df)
 
-  # Tidy multiple rooms
-  df <- dplyr::group_by(df, Staff.Code, Lesson.ID, Class)
-  df <- tidyr::nest(df, Room = c(Room))
-  df <- dplyr::ungroup(df)
-  df <- dplyr::distinct(df)
-  df <- dplyr::rowwise(df) %>% dplyr::mutate(Room = toString(Room))
-  df <- dplyr::ungroup(df)
-  df <- dplyr::distinct(df)
+  # # Tidy multiple rooms
+  # df <- dplyr::group_by(df, Staff.Code, Lesson.ID, Class)
+  # df <- tidyr::nest(df, Room = c(Room))
+  # df <- dplyr::ungroup(df)
+  # df <- dplyr::distinct(df)
+  # df <- dplyr::rowwise(df) %>% dplyr::mutate(Room = toString(Room))
+  # df <- dplyr::ungroup(df)
+  # df <- dplyr::distinct(df)
 
   # Tidy room names
   df <- dplyr::mutate(df, Room = stringr::str_replace_all(Room, "c\\(", ""))

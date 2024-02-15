@@ -159,8 +159,10 @@ hhs_class_list_student <- function(academicYear, student) {
   df_students_sensitive_02 <- dplyr::select(df_students_sensitive, c(student_id, name, value))
   df_students_sensitive_02 <- tidyr::pivot_wider(df_students_sensitive_02, names_from = name, values_from = value)
   df_students_sensitive_02 <- data.frame(df_students_sensitive_02, check.names = TRUE)
-  df_students_sensitive_02 <- dplyr::select(df_students_sensitive_02, c(student_id, "LAC" = Looked.after, Ethnicity, EAL, FSM,
-                                                                        "PP" = Pupil.Premium.Indicator))
+  df_students_sensitive_02 <- dplyr::select(df_students_sensitive_02, c(
+    student_id, "LAC" = Looked.after, Ethnicity, EAL, FSM,
+    "PP" = Pupil.Premium.Indicator
+  ))
 
   message(cat(crayon::silver("Merge datasets")))
 
@@ -184,13 +186,15 @@ hhs_class_list_student <- function(academicYear, student) {
   message(cat(crayon::silver("Clean final output")))
 
   ## Clean
-  df <- dplyr::select(df, c("UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, Surname.Forename.ID,
-                            "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
-                            LAC, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, SEN, SEN.Notes, Keyworker, CP.CAF,
-                            "Year.Group" = year_group, "Reg" = registration_group, "Subject" = name.y, "Class" = name.x,
-                            "Staff.Code" = code.y))
+  df <- dplyr::select(df, c(
+    "UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, Surname.Forename.ID,
+    "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
+    LAC, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, SEN, SEN.Notes, Keyworker, CP.CAF,
+    "Year.Group" = year_group, "Reg" = registration_group, "Subject" = name.y, "Class" = name.x,
+    "Staff.Code" = code.y
+  ))
 
-  df <- dplyr::filter(df, grepl(pattern = student, x = df$Surname.Forename, ignore.case = TRUE))
+  df <- dplyr::filter(df, grepl(pattern = student, x = df$Surname.Forename.Reg, ignore.case = TRUE))
   df <- dplyr::distinct(df)
 
   message(cat(crayon::silver("Impute missing data")))

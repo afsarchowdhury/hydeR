@@ -17,92 +17,96 @@ hhs_behaviour_events_range <- function(academicYear, goDateStart, goDateEnd) {
 
   ## Import data
   df_behaviour_events <- g4sr::gfs_behaviour_events_range(academicYear, goDateStart, goDateEnd)
-  df_behaviour_events <- tidyr::unnest(df_behaviour_events, cols = student_ids, keep_empty = FALSE)
-  df_behaviour_events <- tidyr::unnest(df_behaviour_events, cols = event_action_ids, keep_empty = FALSE)
-  df_behaviour_action_followup <- g4sr::gfs_behaviour_followup(academicYear)
-  df_behaviour_action_immediate <- g4sr::gfs_behaviour_immediate(academicYear)
-  df_behaviour_event_types <- g4sr::gfs_behaviour_event_types(academicYear)
-  df_behaviour_classification <- g4sr::gfs_behaviour_classification(academicYear)
-  df_students <- g4sr::gfs_student_details(academicYear)
-  df_students_details <- g4sr::gfs_student_edu_details(academicYear)
-  df_subjects <- g4sr::gfs_teaching_subjects(academicYear)
-  df_teaching_groups <- g4sr::gfs_teaching_groups(academicYear)
-  df_teaching_groups_students <- g4sr::gfs_teaching_groups_students(academicYear)
-  df_staff <- g4sr::gfs_users_staff()
-  df_cal <- g4sr::gfs_calendar(academicYear)
+  if (nrow(df_behaviour_events) > 0) {
+    df_behaviour_events <- tidyr::unnest(df_behaviour_events, cols = student_ids, keep_empty = FALSE)
+    df_behaviour_events <- tidyr::unnest(df_behaviour_events, cols = event_action_ids, keep_empty = FALSE)
+    df_behaviour_action_followup <- g4sr::gfs_behaviour_followup(academicYear)
+    df_behaviour_action_immediate <- g4sr::gfs_behaviour_immediate(academicYear)
+    df_behaviour_event_types <- g4sr::gfs_behaviour_event_types(academicYear)
+    df_behaviour_classification <- g4sr::gfs_behaviour_classification(academicYear)
+    df_students <- g4sr::gfs_student_details(academicYear)
+    df_students_details <- g4sr::gfs_student_edu_details(academicYear)
+    df_subjects <- g4sr::gfs_teaching_subjects(academicYear)
+    df_teaching_groups <- g4sr::gfs_teaching_groups(academicYear)
+    df_teaching_groups_students <- g4sr::gfs_teaching_groups_students(academicYear)
+    df_staff <- g4sr::gfs_users_staff()
+    df_cal <- g4sr::gfs_calendar(academicYear)
 
-  message(cat(crayon::silver("Merge event actions")))
+    message(cat(crayon::silver("Merge event actions")))
 
-  ## Merge event actions
-  df_behaviour_action <- rbind(df_behaviour_action_followup, df_behaviour_action_immediate)
-  df_behaviour_action <- dplyr::select(df_behaviour_action,
-                                       c(id, "Event.Action" = name, "Event.Action.Type" = type))
+    ## Merge event actions
+    df_behaviour_action <- rbind(df_behaviour_action_followup, df_behaviour_action_immediate)
+    df_behaviour_action <- dplyr::select(df_behaviour_action,
+                                         c(id, "Event.Action" = name, "Event.Action.Type" = type))
 
-  message(cat(crayon::silver("Merge datasets")))
+    message(cat(crayon::silver("Merge datasets")))
 
-  ## Merge
-  df <- dplyr::left_join(df_behaviour_events, df_behaviour_event_types, by = c("event_type_id" = "id"))
-  df <- dplyr::left_join(df, df_behaviour_action, by = c("event_action_ids" = "id"))
-  df <- dplyr::left_join(df, df_behaviour_classification, by = c("event_classification_id" = "id"))
-  df <- dplyr::left_join(df, df_students, by = c("student_ids" = "id"))
-  df <- dplyr::left_join(df, df_students_details, by = c("student_ids" = "student_id"))
-  df <- dplyr::left_join(df, df_staff, by = c("created_by" = "id"))
-  df_02 <- dplyr::left_join(df_teaching_groups, df_teaching_groups_students, by = c("id" = "group_id"))
-  df_02 <- dplyr::left_join(df_02, df_subjects, by = c("subject_id" = "id"))
-  df_02 <- dplyr::left_join(df_02, df_students, by = c("student_ids" = "id"))
-  df_02 <- dplyr::select(df_02, c("Class" = name.x, "subject_code" = code.y, student_ids))
-  df_02 <- dplyr::distinct(df_02)
-  # Rename special classes
-  df_02 <- dplyr::mutate(df_02, Class = ifelse(subject_code == "Ac", "Ac", Class))
-  df_02 <- dplyr::mutate(df_02, Class = ifelse(subject_code == "Al", "Al", Class))
-  df_02 <- dplyr::mutate(df_02, Class = ifelse(subject_code == "Ap", "Ap", Class))
-  df_02 <- dplyr::mutate(df_02, Class = ifelse(subject_code == "Ea", "Ea", Class))
-  df <- dplyr::left_join(df, df_02, by = c("subject_code", "student_ids"))
-  # Remove identical logs from left-join by keeping original class where it exists
-  df <- dplyr::mutate(df, Class = ifelse(is.na(group_name) == TRUE, Class, group_name))
-  df <- dplyr::distinct(df)
-  df_cal <- dplyr::select(df_cal, c("Date" = date, "School.Week" = week, "Day.Type" = day_type_code))
-  df <- dplyr::left_join(df, df_cal, by = c("event_date" = "Date"))
+    ## Merge
+    df <- dplyr::left_join(df_behaviour_events, df_behaviour_event_types, by = c("event_type_id" = "id"))
+    df <- dplyr::left_join(df, df_behaviour_action, by = c("event_action_ids" = "id"))
+    df <- dplyr::left_join(df, df_behaviour_classification, by = c("event_classification_id" = "id"))
+    df <- dplyr::left_join(df, df_students, by = c("student_ids" = "id"))
+    df <- dplyr::left_join(df, df_students_details, by = c("student_ids" = "student_id"))
+    df <- dplyr::left_join(df, df_staff, by = c("created_by" = "id"))
+    df_02 <- dplyr::left_join(df_teaching_groups, df_teaching_groups_students, by = c("id" = "group_id"))
+    df_02 <- dplyr::left_join(df_02, df_subjects, by = c("subject_id" = "id"))
+    df_02 <- dplyr::left_join(df_02, df_students, by = c("student_ids" = "id"))
+    df_02 <- dplyr::select(df_02, c("Class" = name.x, "subject_code" = code.y, student_ids))
+    df_02 <- dplyr::distinct(df_02)
+    # Rename special classes
+    df_02 <- dplyr::mutate(df_02, Class = ifelse(subject_code == "Ac", "Ac", Class))
+    df_02 <- dplyr::mutate(df_02, Class = ifelse(subject_code == "Al", "Al", Class))
+    df_02 <- dplyr::mutate(df_02, Class = ifelse(subject_code == "Ap", "Ap", Class))
+    df_02 <- dplyr::mutate(df_02, Class = ifelse(subject_code == "Ea", "Ea", Class))
+    df <- dplyr::left_join(df, df_02, by = c("subject_code", "student_ids"))
+    # Remove identical logs from left-join by keeping original class where it exists
+    df <- dplyr::mutate(df, Class = ifelse(is.na(group_name) == TRUE, Class, group_name))
+    df <- dplyr::distinct(df)
+    df_cal <- dplyr::select(df_cal, c("Date" = date, "School.Week" = week, "Day.Type" = day_type_code))
+    df <- dplyr::left_join(df, df_cal, by = c("event_date" = "Date"))
 
-  message(cat(crayon::silver("Compute metadata")))
+    message(cat(crayon::silver("Compute metadata")))
 
-  ## Create
-  df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
-  df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$student_ids, ")")
+    ## Create
+    df$Surname.Forename.Reg <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$registration_group, ")")
+    df$Surname.Forename.ID <- paste0(toupper(df$preferred_last_name), " ", df$preferred_first_name, " (", df$student_ids, ")")
 
-  message(cat(crayon::silver("Clean final output")))
+    message(cat(crayon::silver("Clean final output")))
 
-  ## Tidy
-  ### Tidy actions
-  df <- dplyr::select(df, -c(event_action_ids))
-  df <- dplyr::distinct(df)
-  df <- dplyr::group_by(df, id, student_ids)
-  df <- dplyr::mutate(df, Action = paste0(Event.Action, collapse =", "))
-  df <- dplyr::ungroup(df)
-  df <- dplyr::select(df, -c(Event.Action, Event.Action.Type))
-  df <- dplyr::distinct(df)
+    ## Tidy
+    ### Tidy actions
+    df <- dplyr::select(df, -c(event_action_ids))
+    df <- dplyr::distinct(df)
+    df <- dplyr::group_by(df, id, student_ids)
+    df <- dplyr::mutate(df, Action = paste0(Event.Action, collapse =", "))
+    df <- dplyr::ungroup(df)
+    df <- dplyr::select(df, -c(Event.Action, Event.Action.Type))
+    df <- dplyr::distinct(df)
 
-  df <- dplyr::select(df, c(
-    "Event.ID" = id, "Staff" = display_name, "Email.Staff" = email_address,
-    "Year.Group" = national_curriculum_year, "Subject" = subject_code, Class, "Room" = room_name,
-    "UPN" = upn, "GFSID" = student_ids, Surname.Forename.Reg, Surname.Forename.ID,
-    "Surname" = preferred_last_name, "Forename" = preferred_first_name,
-    "Reg" = registration_group, "Gender" = sex,
-    "Date" = event_date, "Timestamp" = created_timestamp, School.Week, Day.Type,
-    "Event.Code" = code, "Event.Name" = name.x, "Event.Classification" = name.y, Action,
-    "Polarity" = significance, "Score" = score, "School.Notes" = school_notes
-  ))
-  df <- dplyr::mutate_all(df, .funs = as.character)
-  df <- dplyr::distinct(df)
-  df$Email.Staff <- tolower(df$Email.Staff)
+    df <- dplyr::select(df, c(
+      "Event.ID" = id, "Staff" = display_name, "Email.Staff" = email_address,
+      "Year.Group" = national_curriculum_year, "Subject" = subject_code, Class, "Room" = room_name,
+      "UPN" = upn, "GFSID" = student_ids, Surname.Forename.Reg, Surname.Forename.ID,
+      "Surname" = preferred_last_name, "Forename" = preferred_first_name,
+      "Reg" = registration_group, "Gender" = sex,
+      "Date" = event_date, "Timestamp" = created_timestamp, School.Week, Day.Type,
+      "Event.Code" = code, "Event.Name" = name.x, "Event.Classification" = name.y, Action,
+      "Polarity" = significance, "Score" = score, "School.Notes" = school_notes
+    ))
+    df <- dplyr::mutate_all(df, .funs = as.character)
+    df <- dplyr::distinct(df)
+    df$Email.Staff <- tolower(df$Email.Staff)
 
-  message(cat(crayon::silver("Lookup student demographic data")))
+    message(cat(crayon::silver("Lookup student demographic data")))
 
-  ## Student demographics
-  df_stu <- hhs_student_details_general(academicYear)
-  df_stu <- dplyr::select(df_stu, c(GFSID, Ethnicity:ncol(df_stu)))
-  df <- dplyr::left_join(df, df_stu, by = c("GFSID"))
-  df <- dplyr::distinct(df)
+    ## Student demographics
+    df_stu <- hhs_student_details_general(academicYear)
+    df_stu <- dplyr::select(df_stu, c(GFSID, Ethnicity:ncol(df_stu)))
+    df <- dplyr::left_join(df, df_stu, by = c("GFSID"))
+    df <- dplyr::distinct(df)
+  } else {
+    df <- df_behaviour_events
+  }
 
   ## Return
   return(df)

@@ -22,8 +22,11 @@ hhs_attendance_student_session <- function(academicYear, goDate, session = NULL)
   df_students <- g4sr::gfs_student_details(academicYear)
   df_students_details <- g4sr::gfs_student_edu_details(academicYear)
 
+  ## Unnest attendance
+  df_attendance_codes$id <- as.character(df_attendance_codes$id)
   df_attendance_codes_02 <- tidyr::unnest(df_attendance_codes, cols = c(aliases))
   df_attendance_codes_02 <- dplyr::select(df_attendance_codes_02, c(alias_id, alias_code, alias_label))
+  df_attendance_codes_02$alias_id <- as.character(df_attendance_codes_02$alias_id)
 
   message(cat(crayon::silver("Merge datasets")))
 
@@ -91,8 +94,11 @@ hhs_attendance_student_lesson <- function(academicYear, goDate) {
   df_timetables <- g4sr::gfs_timetables(academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear)
 
+  ## Unnest attendance
+  df_attendance_codes$id <- as.character(df_attendance_codes$id)
   df_attendance_codes_02 <- tidyr::unnest(df_attendance_codes, cols = c(aliases))
   df_attendance_codes_02 <- dplyr::select(df_attendance_codes_02, c(alias_id, alias_code, alias_label))
+  df_attendance_codes_02$alias_id <- as.character(df_attendance_codes_02$alias_id)
 
   message(cat(crayon::silver("Merge datasets")))
 
@@ -151,7 +157,7 @@ hhs_attendance_student_summary <- function(academicYear) {
   message(cat(crayon::cyan("Generating clean student attendance summary")))
 
   ## Import data
-  df_attendance_codes <- g4sr::gfs_attendance_codes(academicYear)
+  #df_attendance_codes <- g4sr::gfs_attendance_codes(academicYear)
   df_attendance_student_summary <- g4sr::gfs_attendance_student_summary(academicYear)
   df_students <- g4sr::gfs_student_details(academicYear)
   df_students_details <- g4sr::gfs_student_edu_details(academicYear)
@@ -220,8 +226,11 @@ hhs_attendance_student_session_range <- function(academicYear, goDateStart, goDa
   df_students <- g4sr::gfs_student_details(academicYear)
   df_students_details <- g4sr::gfs_student_edu_details(academicYear)
 
+  ## Unnest attendance
+  df_attendance_codes$id <- as.character(df_attendance_codes$id)
   df_attendance_codes_02 <- tidyr::unnest(df_attendance_codes, cols = c(aliases))
   df_attendance_codes_02 <- dplyr::select(df_attendance_codes_02, c(alias_id, alias_code, alias_label))
+  df_attendance_codes_02$alias_id <- as.character(df_attendance_codes_02$alias_id)
 
   message(cat(crayon::silver("Merge datasets")))
 
@@ -301,8 +310,11 @@ hhs_attendance_student_lesson_range <- function(academicYear, goDateStart, goDat
   df_timetables <- g4sr::gfs_timetables(academicYear)
   df_teachers <- g4sr::gfs_teaching_teachers(academicYear)
 
+  ## Unnest attendance
+  df_attendance_codes$id <- as.character(df_attendance_codes$id)
   df_attendance_codes_02 <- tidyr::unnest(df_attendance_codes, cols = c(aliases))
   df_attendance_codes_02 <- dplyr::select(df_attendance_codes_02, c(alias_id, alias_code, alias_label))
+  df_attendance_codes_02$alias_id <- as.character(df_attendance_codes_02$alias_id)
 
   message(cat(crayon::silver("Merge datasets")))
 
