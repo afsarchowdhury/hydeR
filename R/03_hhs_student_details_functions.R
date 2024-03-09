@@ -124,3 +124,45 @@ hhs_student_send_search <- function(academicYear, notesSearch) {
   ## Return
   return(df)
 }
+
+## Raw general student details
+#' Get raw general student details.
+#'
+#' Returns raw general student details for chosen academic year.
+#' @param academicYear academic year as integer.
+#' @examples
+#' hhs_student_details_general(2021)
+#' @export
+hhs_raw_student_details_general <- function(academicYear) {
+  ## Message
+  message(cat(crayon::cyan("Requesting raw student details")))
+
+  ## Import data
+  df_students_general <- g4sr::gfs_student_general(academicYear = academicYear)
+  df_students_details <- g4sr::gfs_student_edu_details(academicYear = academicYear)
+
+  message(cat(crayon::silver("Tidy datasets")))
+
+  ## Tidy general
+  df_students_general <- dplyr::select_if(df_students_general, function(x) !(all(is.na(x)) | all(x == "")))
+  df_students_general <- dplyr::select(df_students_general, c(student_id, name, value, is_system))
+
+  ## Tidy details
+  df_students_details <- dplyr::select(df_students_details, c(student_id, upn))
+
+  message(cat(crayon::silver("Merge datasets")))
+
+  ## Merge datasets
+  df <- dplyr::left_join(df_students_details, df_students_general, by = c("student_id" = "student_id"))
+
+  message(cat(crayon::silver("Clean final output")))
+
+  ## Clean and filter
+  df <- dplyr::select(df, c(
+    "UPN" = upn, "GFSID" = student_id,
+    "Key" = name, "Value" = value
+  ))
+
+  ## Return
+  return(df)
+}
