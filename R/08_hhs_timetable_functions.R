@@ -46,8 +46,17 @@ hhs_timetable <- function(academicYear) {
     "Year.Group" = year_group, "Subject.Code" = subject_code,
     "Class" = group_code, "Room" = rooms
   ))
-  df_classes_02 <- dplyr::filter(df_classes_02, !Room %in% c("character(0)", "NULL"))
+  df_classes_02 <- dplyr::mutate(df_classes_02, Room = ifelse(Room %in% c("character(0)", "NULL"), NA, Room))
   df_classes_02 <- tidyr::unnest(df_classes_02, cols = "Room")
+
+  message(cat(crayon::silver("Impute initial missing rooms")))
+
+  # Impute initial missing rooms
+  df_classes_02 <- dplyr::mutate(df_classes_02, Room = ifelse(is.na(Room) & grepl(pattern = "HRB", x = Class), "HRB", Room))
+  df_classes_02 <- dplyr::mutate(df_classes_02, Room = ifelse(is.na(Room) & grepl(pattern = "HOM", x = Class), "HOME", Room))
+  df_classes_02 <- dplyr::mutate(df_classes_02, Room = ifelse(is.na(Room) & grepl(pattern = "EAL", x = Class), "EAL", Room))
+  df_classes_02 <- dplyr::mutate(df_classes_02, Room = ifelse(is.na(Room) & Subject.Code %in% c("Ac", "Al"), "AC", Room))
+  df_classes_02 <- dplyr::mutate(df_classes_02, Room = ifelse(is.na(Room) & Subject.Code %in% c("Ap"), "AP", Room))
 
   # Clean student classes
   df_student_classes_02 <- dplyr::rename(df_student_classes, c("student_start" = start, "student_end" = end))
@@ -77,6 +86,13 @@ hhs_timetable <- function(academicYear) {
   df <- dplyr::left_join(df, df_teaching_subject_02, by = c("subject_id" = "id", "Subject.Code", "Year.Group"))
   df <- dplyr::left_join(df, df_teaching_department_02, by = c("department_id" = "id"))
   df <- dplyr::left_join(df, df_student_clean_02, by = c("student_id" = "GFSID"))
+
+  message(cat(crayon::silver("Impute final missing rooms")))
+
+  ## Impute final missing rooms
+  df <- dplyr::group_by(df, UPN, Lesson.ID)
+  df <- tidyr::fill(df, Room, .direction = "down")
+  df <- dplyr::ungroup(df)
 
   message(cat(crayon::silver("Clean final output")))
 
