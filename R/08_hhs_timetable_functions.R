@@ -103,6 +103,16 @@ hhs_timetable <- function(academicYear) {
   df <- dplyr::filter(df, !is.na(Class))
   df <- dplyr::filter(df, !is.na(Lesson.ID))
   df <- dplyr::distinct(df)
+
+  message(cat(crayon::silver("Return latest iteration of student timetable")))
+
+  ## Latest version of student timetable
+  df <- dplyr::group_by(df, UPN, Lesson.ID)
+  df <- dplyr::filter(df, student_start == max(student_start))
+  df <- dplyr::ungroup(df)
+  df <- dplyr::distinct(df)
+
+  # Week colour
   df <- dplyr::mutate(df, Week.Colour = ifelse(Week == 1, "Red", ifelse(Week == 2, "Blue", NA)))
 
   # Factor days
