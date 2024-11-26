@@ -22,16 +22,18 @@ hhs_student_details_general <- function(academicYear) {
 
   ## Tidy general
   df_students_general_02 <- dplyr::select(df_students_general, c(student_id, name, value))
-  df_students_general_02 <- dplyr::filter(df_students_general_02,
-                                          grepl(pattern = "admission|uci|age|hml|sen|key|caf|permission",
-                                                x = name, ignore.case = TRUE))
+  df_students_general_02 <- dplyr::filter(
+    df_students_general_02,
+    grepl(pattern = "admission|uci|age|hml|sen|key|permission",
+          x = name, ignore.case = TRUE)
+  )
   df_students_general_02 <- tidyr::pivot_wider(df_students_general_02, names_from = name, values_from = value)
   df_students_general_02 <- data.frame(df_students_general_02, check.names = TRUE)
   df_students_general_02 <- dplyr::select(df_students_general_02,c(
     student_id, "Ad.No" = Admission.number, UCI, HML.Band,
     #"Age.Reading" = X1..Reading.Age, "Age.Spelling" = X2..Spelling.Age,
     "SEN" = X3...SEN.Code, "SEN.Notes" = X4..SEN.Notes,
-    "Keyworker" = X5..Keyworker.Name, CP.CAF,
+    "Keyworker" = X5..Keyworker.Name,
     "Date.Admission" = Admission.date
   ))
   df_students_general_02 <- dplyr::distinct(df_students_general_02)
@@ -72,7 +74,7 @@ hhs_student_details_general <- function(academicYear) {
     "Surname" = preferred_last_name, "Forename" = preferred_first_name, "Reg" = registration_group,
     "Gender" = sex, Ethnicity, EAL, FSM, FSM6, PP, WBr.PP, HML.Band, Ad.No, UCI,
     #Age.Reading, Age.Spelling,
-    SEN, SEN.Notes, Keyworker, LAC, CP.CAF, Date.Admission
+    SEN, SEN.Notes, Keyworker, LAC, Date.Admission
   ))
   df <- dplyr::mutate_all(df, .funs = as.character)
   # df <- dplyr::mutate_at(df, .vars = c("Date.Admission", "Date.Leaving"), .funs = lubridate::mdy_hms)

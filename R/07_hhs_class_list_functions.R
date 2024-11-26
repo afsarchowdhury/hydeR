@@ -45,9 +45,11 @@ hhs_class_list_teacher <- function(academicYear, staffCode = NULL, yearGroupFrom
                                                 x = name, ignore.case = TRUE))
   df_students_general_02 <- tidyr::pivot_wider(df_students_general_02, names_from = name, values_from = value)
   df_students_general_02 <- data.frame(df_students_general_02, check.names = TRUE)
-  df_students_general_02 <- dplyr::select(df_students_general_02,
-                                          c(student_id, UCI, HML.Band, "SEN" = X3...SEN.Code,
-                                            "SEN.Notes" = X4..SEN.Notes, "Keyworker" = X5..Keyworker.Name, CP.CAF))
+  df_students_general_02 <- dplyr::select(
+    df_students_general_02,
+    c(student_id, UCI, HML.Band, "SEN" = X3...SEN.Code,
+      "SEN.Notes" = X4..SEN.Notes, "Keyworker" = X5..Keyworker.Name)
+  )
   df_students_general_02 <- dplyr::distinct(df_students_general_02)
 
   ## Tidy sensitive
@@ -93,7 +95,7 @@ hhs_class_list_teacher <- function(academicYear, staffCode = NULL, yearGroupFrom
                             "Class" = name.x, "UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x,
                             "Gender" = sex, LAC, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, Target,
-                            SEN, SEN.Notes, Keyworker, CP.CAF))
+                            SEN, SEN.Notes, Keyworker))
 
   if (is.null(staffCode)) {
     message(cat(crayon::silver("No staffCode provided.  Return all.")))
@@ -150,9 +152,11 @@ hhs_class_list_student <- function(academicYear, student) {
                                                 x = name, ignore.case = TRUE))
   df_students_general_02 <- tidyr::pivot_wider(df_students_general_02, names_from = name, values_from = value)
   df_students_general_02 <- data.frame(df_students_general_02, check.names = TRUE)
-  df_students_general_02 <- dplyr::select(df_students_general_02,
-                                          c(student_id, UCI, HML.Band, "SEN" = X3...SEN.Code,
-                                            "SEN.Notes" = X4..SEN.Notes, "Keyworker" = X5..Keyworker.Name, CP.CAF))
+  df_students_general_02 <- dplyr::select(
+    df_students_general_02,
+    c(student_id, UCI, HML.Band, "SEN" = X3...SEN.Code,
+      "SEN.Notes" = X4..SEN.Notes, "Keyworker" = X5..Keyworker.Name)
+  )
   df_students_general_02 <- dplyr::distinct(df_students_general_02)
 
   ## Tidy sensitive
@@ -189,7 +193,7 @@ hhs_class_list_student <- function(academicYear, student) {
   df <- dplyr::select(df, c(
     "UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, Surname.Forename.ID,
     "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
-    LAC, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, SEN, SEN.Notes, Keyworker, CP.CAF,
+    LAC, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, SEN, SEN.Notes, Keyworker,
     "Year.Group" = year_group, "Reg" = registration_group, "Subject" = name.y, "Class" = name.x,
     "Staff.Code" = code.y
   ))
