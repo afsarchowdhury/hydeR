@@ -91,7 +91,7 @@ hhs_class_list_teacher <- function(academicYear, staffCode = NULL, yearGroupFrom
   message(cat(crayon::silver("Clean final output")))
 
   ## Clean and filter
-  df <- dplyr::select(df, c("Staff.Code" = code.y, "Year.Group" = year_group, "Reg" = registration_group, "Subject" = name.y,
+  df <- dplyr::select(df, c("Staff.Code" = code.y, "Year.Group" = year_group.y, "Reg" = registration_group, "Subject" = name.y,
                             "Class" = name.x, "UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x,
                             "Gender" = sex, LAC, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, Target,
@@ -194,7 +194,7 @@ hhs_class_list_student <- function(academicYear, student) {
     "UPN" = upn, "GFSID" = student_ids, UCI, Surname.Forename.Reg, Surname.Forename.ID,
     "Surname" = preferred_last_name.x, "Forename" = preferred_first_name.x, "Gender" = sex,
     LAC, Ethnicity, EAL, FSM, PP, WBr.PP, HML.Band, SEN, SEN.Notes, Keyworker,
-    "Year.Group" = year_group, "Reg" = registration_group, "Subject" = name.y, "Class" = name.x,
+    "Year.Group" = year_group.y, "Reg" = registration_group, "Subject" = name.y, "Class" = name.x,
     "Staff.Code" = code.y
   ))
 

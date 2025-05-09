@@ -76,7 +76,7 @@ hhs_exam_results <- function(academicYear, yearGroup, type = NULL) {
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group, "Qualification.Title" = qualification_title.x,
+  df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group.y, "Qualification.Title" = qualification_title.x,
                             "Subject" = name, Class, "UPN" = upn, "GFSID" = student_id, Surname.Forename.Reg,
                             Surname.Forename.ID, "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Reg" = registration_group, "Gender" = sex, PP, HML.Band, Grade.Type, "Grade" = grade))
@@ -149,7 +149,7 @@ hhs_attainment <- function(academicYear, yearGroup) {
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group, "Subject" = name.y, Class,
+  df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group.y, "Subject" = name.y, Class,
                             "UPN" = upn, "GFSID" = grades.student_id, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Reg" = registration_group, "Gender" = sex, "Grade.Type" = name.x, "Grade" = grades.name))
@@ -216,7 +216,7 @@ hhs_attainment_multiple <- function(academicYear, yearGroupFrom = "7", yearGroup
   message(cat(crayon::silver("Clean final output")))
 
   ## Tidy
-  df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group, "Subject" = name.y, Class,
+  df <- dplyr::select(df, c(Staff.Code, "Year.Group" = year_group.y, "Subject" = name.y, Class,
                             "UPN" = upn, "GFSID" = grades.student_id, Surname.Forename.Reg, Surname.Forename.ID,
                             "Surname" = preferred_last_name, "Forename" = preferred_first_name,
                             "Reg" = registration_group, "Gender" = sex, "Grade.Type" = name.x, "Grade" = grades.name))

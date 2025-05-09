@@ -119,7 +119,7 @@ hhs_student_send_search <- function(academicYear, notesSearch) {
     Surname.Forename.ID, Gender, EAL, FSM, FSM6, PP, WBr.PP,
     HML.Band, UCI,
     #Age.Reading, Age.Spelling,
-    SEN, SEN.Notes, Keyworker, LAC, CP.CAF
+    SEN, SEN.Notes, Keyworker, LAC
   ))
   df <- dplyr::arrange(df, as.numeric(Year.Group))
 
