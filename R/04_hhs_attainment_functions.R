@@ -339,7 +339,7 @@ hhs_markbook_attainment <- function(academicYear) {
 
   df <- df %>%
     dplyr::select(c("GFSID" = student_id, Class, "Markbook" = name...3,
-                    "Strand" = name...5, "Mark" = mark, "Grade" = grade)) %>%
+                    "Strand" = name...5, "Mark" = mark, "Max" = max, "Grade" = grade)) %>%
     dplyr::distinct()
 
   df <- dplyr::left_join(df_class_list_02, df, by = c("Class", "GFSID"))
